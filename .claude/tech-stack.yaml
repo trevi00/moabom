@@ -1,0 +1,14 @@
+# netflix-clone — 스택 선언 (하네스가 이 스택 + _common 스킬만 활성화)
+stack:
+  language: java
+  framework: springboot
+  version: "3.2"
+database:
+  type: mysql
+  version: "8.0"   # 회사 5.7 제약 없음 — 신규 프로젝트는 8.0 (윈도 함수·CTE 활용)
+orm: jpa            # 회사 mybatis 와 달리 포트폴리오 표준 스택으로
+
+# 프론트엔드/보조 스택은 스킬 로딩 힌트 (파이프라인 FE 스테이지가 소비)
+extensions: []
+
+# 참조 아키텍처: Netflix TechBlog 공개 패턴을 축소 이식 (PROJECT-BRIEF.md §3)
