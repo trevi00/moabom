@@ -145,17 +145,82 @@ Explicitly excluded. Documented to prevent scope creep.
 
 ## Traceability
 
-Which phases cover which requirements. Updated during roadmap creation.
+Which phases cover which requirements. Filled during roadmap creation (2026-08-06).
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| (roadmap 생성 시 채움) | | |
+| Requirement | Phase | Status | 배정 근거 (자명하지 않은 것만) |
+|-------------|-------|--------|--------------------------------|
+| AUTH-01 | Phase 3 | Pending | — |
+| AUTH-02 | Phase 3 | Pending | — |
+| AUTH-03 | Phase 8 | Pending | 유일한 admin-gated 표면(인제스트)과 같은 phase |
+| PROF-01 | Phase 3 | Pending | — |
+| PROF-02 | Phase 3 | Pending | — |
+| PROF-03 | Phase 3 | Pending | — |
+| PROF-04 | Phase 3 | Pending | — |
+| PROF-05 | Phase 3 | Pending | — |
+| BROW-01 | Phase 5 | Pending | — |
+| BROW-02 | Phase 5 | Pending | 행 타입 계약 소유. 비개인화 4종 P5 라이브, 개인화(P6)·마이리스트(P7)가 같은 계약에 플러그인 합류 → P7 종료 시 6종 완성 |
+| BROW-03 | Phase 5 | Pending | — |
+| BROW-04 | Phase 5 | Pending | — |
+| BROW-05 | Phase 5 | Pending | — |
+| BROW-06 | Phase 5 | Pending | — |
+| BROW-07 | Phase 5 | Pending | — |
+| BROW-08 | Phase 5 | Pending | — |
+| PLAY-01 | Phase 2 | Pending | — |
+| PLAY-02 | Phase 2 | Pending | — |
+| PLAY-03 | Phase 4 | Pending | — |
+| PLAY-04 | Phase 4 | Pending | — |
+| PLAY-05 | Phase 4 | Pending | — |
+| PLAY-06 | Phase 4 | Pending | — |
+| PLAY-07 | Phase 4 | Pending | — |
+| PLAY-08 | Phase 4 | Pending | 플레이어가 완성되는 도메인 phase. P2는 재생 계약 실증까지 |
+| SRCH-01 | Phase 7 | Pending | — |
+| SRCH-02 | Phase 7 | Pending | — |
+| SRCH-03 | Phase 7 | Pending | — |
+| SRCH-04 | Phase 7 | Pending | — |
+| SRCH-05 | Phase 7 | Pending | — |
+| LIST-01 | Phase 7 | Pending | — |
+| LIST-02 | Phase 7 | Pending | — |
+| LIST-03 | Phase 7 | Pending | — |
+| RECO-01 | Phase 5 | Pending | 레지스트리는 행이 여러 개 생기는 P5에서 탄생. P6·P7의 신규 행이 '기존 파일 수정 0'을 실증 |
+| RECO-02 | Phase 6 | Pending | — |
+| RECO-03 | Phase 6 | Pending | — |
+| RECO-04 | Phase 5 | Pending | Top10은 비개인화 폴백 행 세트의 일부 → P5 |
+| RECO-05 | Phase 5 | Pending | 신규 추가 행은 비개인화 폴백 행 세트의 일부 → P5 |
+| RECO-06 | Phase 6 | Pending | 폴백 구현체 자체는 P5 산출물. 서킷브레이커와 코드 경로를 공유한다는 속성이 P6 |
+| RECO-07 | Phase 6 | Pending | — |
+| INGST-01 | Phase 2 | Pending | 요구사항이 명시한 '가장 이른 산출물'. 손-트랜스코딩 사다리 규약과 같은 phase |
+| INGST-02 | Phase 8 | Pending | — |
+| INGST-03 | Phase 8 | Pending | — |
+| INGST-04 | Phase 8 | Pending | — |
+| INGST-05 | Phase 8 | Pending | — |
+| INGST-06 | Phase 8 | Pending | — |
+| INGST-07 | Phase 8 | Pending | — |
+| INGST-08 | Phase 8 | Pending | — |
+| INGST-09 | Phase 8 | Pending | 아트워크 '등록'은 관리자 기능이라 P8. 행 UI가 쓰는 아트워크 값은 P2 배치 시딩으로 선확보 |
+| INGST-10 | Phase 4 | Pending | 소비자 PLAY-07(자막 토글)과 같은 phase (producer↔consumer coherence) |
+| INGST-11 | Phase 8 | Pending | — |
+| INGST-12 | Phase 3 | Pending | 발행 결정권은 catalog 소유. ingest는 P8에서 상태 전이 구동자로 합류 |
+| INGST-13 | Phase 8 | Pending | — |
+| ARCH-01 | Phase 1 | Pending | — |
+| ARCH-02 | Phase 6 | Pending | — |
+| ARCH-03 | Phase 2 | Pending | — |
+| ARCH-04 | Phase 6 | Pending | 계측 대상(서킷 CLOSED→OPEN 전이)이 생기는 지점 |
+| ARCH-05 | Phase 1 | Pending | — |
+| LGL-01 | Phase 5 | Pending | 표기가 사용자에게 노출되는 지점. 스키마 컬럼(attribution/license)은 P1 가드레일 산출물 |
 
 **Coverage:**
-- v1 requirements: 53 total
-- Mapped to phases: 0
-- Unmapped: 53 ⚠️ (roadmap 생성 전)
+- v1 requirements: **58 total**
+- Mapped to phases: 58
+- Unmapped: 0 (orphan 0, 중복 배정 0)
+
+**Phase별 분포:** P1 2 · P2 4 · P3 8 · P4 7 · P5 12 · P6 6 · P7 8 · P8 11 = 58
+
+**총계 정정 (2026-08-06):** 종전 이 문서는 v1 요구사항을 "53 total"이라 적었으나 실측 체크박스는 58개다
+(`grep -c '^- \[ \] \*\*'` = 58; 카테고리별 AUTH 3 · PROF 5 · BROW 8 · PLAY 8 · SRCH 5 · LIST 3 · RECO 7 · INGST 13 · ARCH 5 · LGL 1).
+5개 차이의 출처는 확인되지 않았다 — 로드맵은 **실측 58개 전부**를 매핑했으므로 어느 쪽이 오기였든 누락은 없다.
+
+순서상 두 이견(인제스트 제품화 시점 D1, 검색 배치 D2)의 확정 근거는 ROADMAP.md §Ordering Decisions에 있다.
 
 ---
 *Requirements defined: 2026-08-06*
-*Last updated: 2026-08-06 after initial definition (auto mode — 브리프 승인분 + FEATURES IN 판정 합성)*
+*Last updated: 2026-08-06 after roadmap creation (traceability 채움 + v1 총계 53→58 실측 정정)*
