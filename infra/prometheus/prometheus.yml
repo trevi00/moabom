@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  # CP-8: dev(호스트 JVM) 와 full(컨테이너, 8080 을 호스트에 publish) 양쪽에서 같은 타깃이 유효하도록
+  #       host-gateway 를 단일 타깃으로 쓴다 (compose 의 extra_hosts 가 Linux 호환을 보장).
+  #       ⚠️ 이 전략은 RESEARCH Assumptions A2 = 미실측이다. Plan 07 이 실기동으로 닫는다.
+  #          한쪽 모드에서 DOWN 이면 대안은 scrape job 2개 분리(하나는 상시 DOWN 감수).
+  - job_name: moabom-app
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['host.docker.internal:8080']
+
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
