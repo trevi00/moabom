@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-02-PLAN.md
-last_updated: "2026-08-06T04:27:46.510Z"
-last_activity: 2026-08-06
+stopped_at: Completed 01-03-PLAN.md
+last_updated: "2026-08-06T04:58:32.179Z"
+last_activity: 2026-08-06 -- 01-03 완료 (Next 16.2.12 골격 + rewrites 단일 진입 오리진 + FE standalone 이미지; RESEARCH A3 반증)
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 8
-  completed_plans: 2
-  percent: 25
+  completed_plans: 3
+  percent: 38
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 ## Current Position
 
 Phase: 1 (기반 + 가드레일) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 Status: Ready to execute
-Last activity: 2026-08-06 -- 01-02 완료 (Gradle 8.14.5 스캐폴딩 + Modulith 8모듈 골격 + ModularityTests 4종 green)
+Last activity: 2026-08-06 -- 01-03 완료 (Next 16.2.12 골격 + rewrites 단일 진입 오리진 + FE standalone 이미지; RESEARCH A3 반증)
 
-Progress: [███░░░░░░░] 25%
+Progress: [████░░░░░░] 38%
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Progress: [███░░░░░░░] 25%
 *Updated after each plan completion*
 | Phase 01 P01 | 9 min | 3 tasks | 5 files |
 | Phase 01 P02 | 21 min | 3 tasks | 37 files |
+| Phase 01 P03 | 23 min | 2 tasks | 14 files |
 
 ## Accumulated Context
 
@@ -71,6 +72,9 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Phase 01]: 01-02: shared 를 open module 로 선언 못함 — Modulith 1.1.12 에 type 속성 부재(실측 javap) — 버전 핀 유지 + allowedDependencies={} 일반 모듈로 착지. 소비자가 "shared" 를 명시 추가하는 방향(경계를 넓히지 않음). Phase 3+ 필독
 - [Phase 01]: 01-02: ModularityTests 에 경계 명시선언 테스트 추가 — 플랜 명세 3종은 @ApplicationModule 선언 0인 상태에서도 전부 green 이라 Task 3 을 판별하지 못했다 (RESEARCH P-3 를 실행 게이트로 승격)
 - [Phase 01]: 01-02: ARCH-01 mark-complete 미실행 — 요구사항 문구의 CI 게이트 절반이 Plan 06 소관이고 .github/workflows 부재. 4개 플랜(01-02/06/07/08) 공유 요구사항
+- [Phase 01]: 01-03: RESEARCH A3 반증 — rewrites destination 은 next build 시점에 routes-manifest.json 으로 구워지고 런타임 env 는 무시된다 (반사실 2-arm 실측). Dockerfile 이 목적지를 ARG 로 받고 기본값을 full 프로필(app:8080/nginx:80)로 둔다 — compose 는 build.args, .env 런타임 주입은 무효
+- [Phase 01]: 01-03: create-next-app 잔재 삭제(page.module.css/favicon/svg 5종/보일러플레이트 README) + AGENTS.md·CLAUDE.md 유지 — D-05 얇게 vs Next16 학습데이터 경고의 실용 가치
+- [Phase 01]: 01-03: ARCH-05 mark-complete 미실행 (01-01·01-02 선례) — compose.yaml 부재, 7개 플랜 공유 요구사항
 
 ### Pending Todos
 
@@ -87,11 +91,14 @@ None yet.
 - **[D2 잔여 리스크]** 검색이 v1 후반까지 없음 — Phase 5~6 구간에 "검색 없는 데모"가 존재한다.
 - **[버전 핀 체크포인트]** resilience4j 2.2.0 고정(2.3.0은 Boot 3 + Java 17에서 기동 실패), Boot 3.2.12 라인 최종 패치 — Phase 1에서 핀, Phase 6·8 착수 시 실측 재확인.
 - **[문서 불일치, 해소됨]** REQUIREMENTS.md 헤더가 v1 요구사항 "53 total"이라 적었으나 실측 58개. 로드맵은 58개 전부 매핑, REQUIREMENTS.md Coverage 블록 정정 완료.
+- **[Plan 07, HIGH]** 로컬 8080 을 무관한 서비스(EnterpriseDB, PID 5140)가 점유 중 — 백엔드 로컬 기동 전 해제하거나 포트를 옮겨야 한다 (01-03 프로브가 우연히 발견)
+- **[Plan 05/07, HIGH]** BACKEND_ORIGIN/MEDIA_ORIGIN 은 런타임 변수가 아니다 — rewrites 목적지는 next build 시점에 구워진다(01-03 A3 반증). compose FE 서비스는 build.args 로 줘야 하고 .env 런타임 주입은 효과가 없다
+- **[Plan 06, MEDIUM]** npm audit high 3건(postcss XSS/경로순회, sharp libvips CVE) — 수정 경로가 next@16.3.0 뿐이라 잠긴 핀 16.2.12 와 충돌. Dependabot 이 붉게 띄울 예정이며 핀 vs CVE 는 사람 판단 필요
 
 ## Session Continuity
 
-Last session: 2026-08-06T04:27:46.504Z
-Stopped at: Completed 01-02-PLAN.md
+Last session: 2026-08-06T04:56:59.816Z
+Stopped at: Completed 01-03-PLAN.md
 Resume file: None
 
 Next: `/kha-plan-phase 1`
