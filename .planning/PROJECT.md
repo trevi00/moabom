@@ -79,11 +79,11 @@
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | M1 = MVP 7종 전체 (프로필·브라우즈·재생·검색·마이리스트·추천v1·인제스트) | 2026-08-05 사용자 승인 — 축소 스케일이라도 루프 전체를 관통해야 포트폴리오 가치 | — Pending |
-| Spring Modulith 모듈리스 (물리 MSA 아님) | 모듈 경계 검증은 얻되 운영 복잡도 회피; 물리 분리는 트래픽이 요구할 때 (트립와이어) | — Pending |
+| Spring Modulith 모듈리스 (물리 MSA 아님) | 모듈 경계 검증은 얻되 운영 복잡도 회피; 물리 분리는 트래픽이 요구할 때 (트립와이어) | ✅ P1 실증 — 8모듈 verify() green + 경계 위반 반사실 차단 (2026-08-06). 후반 증설 phase(9~)는 /kha-add-phase 대기 |
 | BFF가 완성된 lolomo JSON 반환 (클라이언트 조립 금지) | Netflix BFF 패턴 축소 이식; FE-BE 계약 단순화 | — Pending |
 | FE = Next.js + React + hls.js | 2026-08-05 사용자 승인 | — Pending |
 | 서비스명 = 모아봄(moabom) | 2026-08-05 사용자 확정; 상표 회피 워드마크 | — Pending |
-| MySQL 8.0 + JPA (회사 스택과 분리) | 신규 포트폴리오는 최신 표준 스택; 윈도 함수·CTE 활용 | — Pending |
+| MySQL 8.0 + JPA (회사 스택과 분리) | 신규 포트폴리오는 최신 표준 스택; 윈도 함수·CTE 활용 | ✅ P1 착지 — Flyway 단일 진실 + ngram/collation 파라미터 실효를 Testcontainers로 실측 (2026-08-06) |
 | spec-notation v1 첫 실 채택 (US/AC 표기) | debate-1785889297 수렴 규약의 첫 실전 적용 프로젝트 | — Pending |
 | 테크블로그 원문 인용-강제 리서치 규율 | 차용-조사 과낙관 2-Strike 경계; 원문 조건 vs 우리 스케일 차이 명시 | — Pending |
 
@@ -105,4 +105,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-06 after initialization (PROJECT-BRIEF.md 승인분 합성)*
+*Last updated: 2026-08-06 after Phase 1 completion — github.com/trevi00/moabom public, CI green, verification human_needed(UAT 5 이월)*
