@@ -60,8 +60,13 @@ cp .env.example .env                  # MEDIA_ROOT 등 (실제 .env 는 커밋 �
 `core.hooksPath`는 저장소가 아니라 로컬 git 설정이므로 **클론마다 1회** 필요합니다.
 설정하지 않으면 훅은 그냥 돌지 않습니다 — 조용히 실패하는 종류라 이 줄을 건너뛰지 마세요.
 
-현재 시점 정직 표기: `.env.example`은 compose·앱 설정이 들어오는 단계에서 추가됩니다.
-그 전까지 두 번째 줄은 건너뛰어도 됩니다.
+`.env.example`은 저장소 루트에 있습니다(Plan 01-05에서 추가). compose가 이 디렉터리의 `.env`를
+읽어 `MEDIA_ROOT`·비밀번호를 치환합니다 — 복사하지 않으면 `${MEDIA_ROOT:-D:/moabom-media}`의
+기본값이 그대로 쓰입니다.
+
+⚠️ 프런트엔드의 `BACKEND_ORIGIN`/`MEDIA_ORIGIN`은 **런타임 변수가 아닙니다**: `next build` 시점에
+목적지가 구워집니다(01-03 실측). full 프로필에서는 compose의 `web.build.args`가 정본이고,
+`npm run dev`로 값을 바꾸려면 루트가 아니라 `frontend/.env`에 둬야 합니다.
 
 ## 미디어 루트
 
