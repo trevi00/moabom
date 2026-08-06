@@ -60,7 +60,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. 빈 DB에 Flyway 마이그레이션만 돌려도 스키마 + 한글 골든 시드가 재현되고, title 테이블에 attribution/license 컬럼이 존재한다
   4. 미디어 파일이 저장소 히스토리에 들어가지 못한다 — 미디어 루트가 저장소 밖(`D:/moabom-media/`)이고 `.gitignore`·pre-commit 훅·CI 히스토리 스캔이 **첫 push 이전**에 존재한다 (planning 커밋 5개가 선행하므로 "첫 커밋 이전"은 사후 만족 불가 — 정직 재서술). 차단 여부는 반사실 프로브 V-SC4d 로 증명한다
 **Plans**: 8 plans (5 waves)
-- [ ] 01-01-PLAN.md — 저장소 가드레일: .gitignore(CP-1 준수)/.gitattributes/.editorconfig/pre-commit 훅/README + 저장소 밖 미디어 루트 [wave 1]
+- [x] 01-01-PLAN.md — 저장소 가드레일: .gitignore(CP-1 준수)/.gitattributes/.editorconfig/pre-commit 훅/README + 저장소 밖 미디어 루트 [wave 1]
 - [ ] 01-02-PLAN.md — backend Gradle 8.14.5 스캐폴딩 + Modulith 8모듈 골격 + ModularityTests(verify) [wave 1]
 - [ ] 01-03-PLAN.md — frontend Next 16.2.12 얇은 골격 + rewrites 단일 진입 오리진 + FE Dockerfile [wave 1]
 - [ ] 01-04-PLAN.md — Flyway 스키마 단일 진실(V1 title + V2 한글 골든/CC-BY 시드) + SchemaMigrationTest [wave 2]

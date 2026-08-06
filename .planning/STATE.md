@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 1 context gathered
-last_updated: "2026-08-06T02:01:33.416Z"
-last_activity: 2026-08-06 -- Phase 1 planning complete
+stopped_at: Completed 01-01-PLAN.md
+last_updated: "2026-08-06T04:01:25.585Z"
+last_activity: 2026-08-06
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 8
-  completed_plans: 0
-  percent: 0
+  completed_plans: 1
+  percent: 13
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 
 ## Current Position
 
-Phase: 1 of 8 (기반 + 가드레일)
-Plan: 0 of TBD in current phase
+Phase: 1 (기반 + 가드레일) — EXECUTING
+Plan: 2 of 8
 Status: Ready to execute
-Last activity: 2026-08-06 -- Phase 1 planning complete
+Last activity: 2026-08-06 -- 01-01 완료 (저장소 가드레일 4종 + 저장소 밖 미디어 루트)
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [█░░░░░░░░░] 13%
 
 ## Performance Metrics
 
@@ -52,6 +52,7 @@ Progress: [░░░░░░░░░░] 0%
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01 P01 | 9 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -64,6 +65,8 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Roadmap D2]: 검색 = Phase 7(추천 이후, 마이리스트와 묶음). 근거 — My List가 RowProvider OCP의 최소 실증체라 레지스트리 선행 필요, SRCH-05 랭킹이 RECO-04 인기도 집계 재사용, ngram vs LIKE 실측은 코퍼스 최대 시점에.
 - [Roadmap]: 리서치 9-phase 스파인을 8로 압축 — 원 Phase 8(실험/카오스/QoE)이 전부 v2로 결정돼 v1 잔여(ARCH-04 관측)를 Phase 6에 흡수.
 - [Roadmap]: BROW-02(행 타입 최소 세트)를 Phase 5가 소유 — 비개인화 4종 라이브 + 개인화(P6)·마이리스트(P7)가 같은 계약에 플러그인 합류, Phase 7 종료 시 6종 완성.
+- [Phase 01]: 01-01: .gitignore 전역 *.ts 금지 — 경로 스코프(media/**/*.ts) + 5MB 훅 게이트로 대체 — CP-1: .ts 는 MPEG-TS 세그먼트이자 TypeScript 확장자. frontend/ 가 같은 저장소라 전역 배제는 Next.js 소스를 조용히 삼킨다. check-ignore 반사실 프로브를 acceptance 에 고정
+- [Phase 01]: 01-01: ARCH-05 는 mark-complete 하지 않음 — 마지막 기여 플랜(01-08)에서 표기 — ARCH-05 를 7개 플랜이 공유하고 compose.yaml 이 아직 없다. 지금 체크하면 기동되지 않는 스택을 기동된다고 선언하는 것 (CLAUDE.md 정직 표기 우선)
 
 ### Pending Todos
 
@@ -83,8 +86,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-08-06T00:31:46.443Z
-Stopped at: Phase 1 context gathered
-Resume file: .planning/phases/01-foundation-guardrails/01-CONTEXT.md
+Last session: 2026-08-06T04:00:38.039Z
+Stopped at: Completed 01-01-PLAN.md
+Resume file: None
 
 Next: `/kha-plan-phase 1`

@@ -1,0 +1,134 @@
+{
+  "nodes": [
+    {
+      "id": "artifact-01-01-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-01-PLAN.md"
+    },
+    {
+      "id": "artifact-01-02-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-02-PLAN.md"
+    },
+    {
+      "id": "artifact-01-03-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-03-PLAN.md"
+    },
+    {
+      "id": "artifact-01-04-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-04-PLAN.md"
+    },
+    {
+      "id": "artifact-01-05-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-05-PLAN.md"
+    },
+    {
+      "id": "artifact-01-06-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-06-PLAN.md"
+    },
+    {
+      "id": "artifact-01-07-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-07-PLAN.md"
+    },
+    {
+      "id": "artifact-01-08-PLAN",
+      "kind": "artifact",
+      "ref": "phases/01-foundation-guardrails/01-08-PLAN.md"
+    },
+    {
+      "id": "phase-1",
+      "kind": "phase",
+      "ref": "기반 + 가드레일"
+    },
+    {
+      "id": "phase-2",
+      "kind": "phase",
+      "ref": "미디어 재생 수직 슬라이스 (앱 Java 0줄)"
+    },
+    {
+      "id": "phase-3",
+      "kind": "phase",
+      "ref": "카탈로그 + 계정/프로필 도메인"
+    },
+    {
+      "id": "phase-4",
+      "kind": "phase",
+      "ref": "playback 도메인 (Core Value 폐곡선)"
+    },
+    {
+      "id": "phase-5",
+      "kind": "phase",
+      "ref": "BFF v1 + 행(row) 기반 홈"
+    },
+    {
+      "id": "phase-6",
+      "kind": "phase",
+      "ref": "추천 v1 + 복원력 + 관측"
+    },
+    {
+      "id": "phase-7",
+      "kind": "phase",
+      "ref": "검색 + 마이리스트"
+    },
+    {
+      "id": "phase-8",
+      "kind": "phase",
+      "ref": "(원 P8) 흡수 기록:** 리서치의 Phase 8(실험 + 관측/카오스 하드닝) 중 v1 요구사항으로 남은 것은 ARCH-04(관측) 하나뿐이다 — 실험 플래그(EXP-V2-01), 서킷브레이커 실측 데모(EXP-V2-02), 카오스(EXP-V2-03), QoE 계측(PLAY-V2-02)이 모두 v2로 결정됐다. 관측은 계측 대상(서킷 전이)이 생기는 이 phase로 흡수했다. \"실험이 정렬 대상(추천) 이후\"라는 4문서 합의는 v2에서도 유효 — EXP-V2-01은 Phase 6 이후에만 배치 가능하다."
+    }
+  ],
+  "edges": [
+    {
+      "from": "artifact-01-01-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-01-PLAN.md"
+    },
+    {
+      "from": "artifact-01-02-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-02-PLAN.md"
+    },
+    {
+      "from": "artifact-01-03-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-03-PLAN.md"
+    },
+    {
+      "from": "artifact-01-04-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-04-PLAN.md"
+    },
+    {
+      "from": "artifact-01-05-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-05-PLAN.md"
+    },
+    {
+      "from": "artifact-01-06-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-06-PLAN.md"
+    },
+    {
+      "from": "artifact-01-07-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-07-PLAN.md"
+    },
+    {
+      "from": "artifact-01-08-PLAN",
+      "to": "phase-1",
+      "kind": "realizes",
+      "provenance": "plan:phases/01-foundation-guardrails/01-08-PLAN.md"
+    }
+  ]
+}
