@@ -36,20 +36,20 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 7
-- Average duration: 17.3 min
-- Total execution time: 2.0 hours (121 min)
+- Total plans completed: 8
+- Average duration: 17.9 min
+- Total execution time: 2.4 hours (143 min)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 7 / 8 | 121 min | 17.3 min |
+| 01 | 8 / 8 | 143 min | 17.9 min |
 
 **Recent Trend:**
 
-- Last 7 plans: 9 · 21 · 23 · 18 · 11 · 11 · 28 min
-- Trend: 01-07 이 28분으로 최고치 — 산출물이 문서 3종뿐인데 시간의 대부분이 **실행**에 쓰였다(bootBuildImage 3m08s 빌더 pull, 컨테이너 6종 기동, gradle 4회 실행, 반사실 arm 3종 + 귀속 arm 1종). 문서 산출량과 소요 시간이 처음으로 역상관을 보인 플랜이며, 실기동 검증 플랜의 비용 기준선으로 쓸 것
+- Last 8 plans: 9 · 21 · 23 · 18 · 11 · 11 · 28 · 22 min
+- Trend: 01-07(28분)에 이어 01-08 이 22분으로 2위 — 두 플랜 모두 **산출물은 문서 1~3종인데 시간의 대부분이 외부 시스템 대기**에 쓰였다(01-07 = 컨테이너 기동, 01-08 = CI 런 3회 × 각 2m5s/10s + 로그 회수·분석). 01-07 이 세운 "문서 산출량과 소요 시간의 역상관" 관찰이 재확인됐다. **검증·관측 성격의 플랜은 20분대를 기준선**으로 잡을 것 — 구현 플랜(01-02 21분/37파일)과 같은 시간에 산출물은 1/30 이다. 이는 비효율이 아니라 이 phase 가 게이트의 *작동*을 값으로 요구했기 때문이다
 
 *Updated after each plan completion*
 | Phase 01 P01 | 9 min | 3 tasks | 5 files |
@@ -59,7 +59,7 @@ Progress: [██████████] 100%
 | Phase 01 P05 | 11 min | 2 tasks | 5 files |
 | Phase 01 P06 | 11 min | 3 tasks | 4 files |
 | Phase 01 P07 | 28 min | 3 tasks | 5 files |
-| Phase 01 P08 | 17 | 2 tasks | 1 files |
+| Phase 01 P08 | 22 min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
