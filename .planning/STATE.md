@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-08-06T04:01:25.585Z"
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-08-06T04:27:46.510Z"
 last_activity: 2026-08-06
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 8
-  completed_plans: 1
-  percent: 13
+  completed_plans: 2
+  percent: 25
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 ## Current Position
 
 Phase: 1 (기반 + 가드레일) — EXECUTING
-Plan: 2 of 8
+Plan: 3 of 8
 Status: Ready to execute
-Last activity: 2026-08-06 -- 01-01 완료 (저장소 가드레일 4종 + 저장소 밖 미디어 루트)
+Last activity: 2026-08-06 -- 01-02 완료 (Gradle 8.14.5 스캐폴딩 + Modulith 8모듈 골격 + ModularityTests 4종 green)
 
-Progress: [█░░░░░░░░░] 13%
+Progress: [███░░░░░░░] 25%
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Progress: [█░░░░░░░░░] 13%
 
 *Updated after each plan completion*
 | Phase 01 P01 | 9 min | 3 tasks | 5 files |
+| Phase 01 P02 | 21 min | 3 tasks | 37 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,9 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Roadmap]: BROW-02(행 타입 최소 세트)를 Phase 5가 소유 — 비개인화 4종 라이브 + 개인화(P6)·마이리스트(P7)가 같은 계약에 플러그인 합류, Phase 7 종료 시 6종 완성.
 - [Phase 01]: 01-01: .gitignore 전역 *.ts 금지 — 경로 스코프(media/**/*.ts) + 5MB 훅 게이트로 대체 — CP-1: .ts 는 MPEG-TS 세그먼트이자 TypeScript 확장자. frontend/ 가 같은 저장소라 전역 배제는 Next.js 소스를 조용히 삼킨다. check-ignore 반사실 프로브를 acceptance 에 고정
 - [Phase 01]: 01-01: ARCH-05 는 mark-complete 하지 않음 — 마지막 기여 플랜(01-08)에서 표기 — ARCH-05 를 7개 플랜이 공유하고 compose.yaml 이 아직 없다. 지금 체크하면 기동되지 않는 스택을 기동된다고 선언하는 것 (CLAUDE.md 정직 표기 우선)
+- [Phase 01]: 01-02: shared 를 open module 로 선언 못함 — Modulith 1.1.12 에 type 속성 부재(실측 javap) — 버전 핀 유지 + allowedDependencies={} 일반 모듈로 착지. 소비자가 "shared" 를 명시 추가하는 방향(경계를 넓히지 않음). Phase 3+ 필독
+- [Phase 01]: 01-02: ModularityTests 에 경계 명시선언 테스트 추가 — 플랜 명세 3종은 @ApplicationModule 선언 0인 상태에서도 전부 green 이라 Task 3 을 판별하지 못했다 (RESEARCH P-3 를 실행 게이트로 승격)
+- [Phase 01]: 01-02: ARCH-01 mark-complete 미실행 — 요구사항 문구의 CI 게이트 절반이 Plan 06 소관이고 .github/workflows 부재. 4개 플랜(01-02/06/07/08) 공유 요구사항
 
 ### Pending Todos
 
@@ -86,8 +90,8 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-08-06T04:00:38.039Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-08-06T04:27:46.504Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
 
 Next: `/kha-plan-phase 1`
