@@ -1,0 +1,31 @@
+#!/bin/sh
+# D-10: 미디어 확장자 + 대용량 파일만 차단. 모듈 경계 검증·빌드는 CI 소관 (로컬 훅에 태우지 않는다).
+# CP-1: *.ts 는 전역 차단하지 않는다 — TypeScript 와 충돌. 경로 스코프로만 차단.
+set -e
+MAX_BYTES=5242880   # 5MB
+MEDIA_RE='\.(mp4|mkv|mov|avi|webm|m4s|flv|wmv|mpg|mpeg)$'
+PATH_TS_RE='(^|/)(media|transcode-tmp|uploads|hls)/.*\.ts$'
+
+fail=0
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+[ -z "$staged" ] && exit 0
+
+for f in $staged; do
+  case_hit=0
+  echo "$f" | grep -Eiq "$MEDIA_RE" && case_hit=1
+  echo "$f" | grep -Eq  "$PATH_TS_RE" && case_hit=1
+  if [ "$case_hit" = 1 ]; then
+    echo "BLOCKED (media extension): $f" >&2; fail=1; continue
+  fi
+  size=$(git cat-file -s ":$f" 2>/dev/null || echo 0)
+  if [ "$size" -gt "$MAX_BYTES" ]; then
+    echo "BLOCKED (>5MB: ${size}B): $f" >&2; fail=1
+  fi
+done
+
+if [ "$fail" = 1 ]; then
+  echo "" >&2
+  echo "미디어/대용량 파일은 저장소에 들어갈 수 없습니다. 미디어 루트는 D:/moabom-media/ 입니다." >&2
+  echo "우회가 정말 필요하면: git commit --no-verify (이력 세탁 비용을 감수한다는 뜻)" >&2
+  exit 1
+fi
