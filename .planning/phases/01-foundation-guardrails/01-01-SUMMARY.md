@@ -131,9 +131,19 @@ completed: 2026-08-06
 - **Committed in:** 본 SUMMARY 커밋
 - **잔여:** 도구 자체 결함은 미수정 — 다음 플랜에서도 재발한다. 하네스 백로그 후보.
 
+**5. [Rule 1 - Bug] `roadmap update-plan-progress` 가 Progress 표 행을 갱신하지 않음 (동형 결함 2회 = 2-Strike)**
+
+- **Found during:** 플랜 종료 시 ROADMAP 갱신
+- **Issue:** 도구가 `{"updated": true, "summary_count": 1, "status": "In Progress"}` 를 반환하고 **플랜 체크박스(`- [ ] 01-01-PLAN.md` → `- [x]`)는 실제로 바꿨지만**, 워크플로 문서가 약속한 "Progress 표 행 갱신"은 하지 않았다 — 표는 `| 1. 기반 + 가드레일 | 0/8 | Planned | - |` 그대로.
+- **반사실 판별:** 호출 인자 형태 문제인지 확인하기 위해 워크플로 문서형(`update-plan-progress 01`, 인자 1개)으로 재호출 → `"updated": true` 를 반환했으나 `git status` 는 **무변경**(파일을 아예 쓰지 않음). 즉 호출 형태가 아니라 도구 결함이다.
+- **Fix:** 하네스는 스코프 밖이라 미수정. 이 저장소의 `.planning/ROADMAP.md` 표 행만 디스크 실측값(PLAN 8 / SUMMARY 1)으로 `1/8 · In Progress` 정정.
+- **Files modified:** `.planning/ROADMAP.md`
+- **Verification:** 표 행이 체크박스 상태(`- [x] 01-01-PLAN.md` 1건) 및 STATE frontmatter(`completed_plans: 1`)와 일치.
+- **패턴:** Deviation 4 와 **동형** — 두 도구 모두 `updated: true` 라벨을 반환하면서 본문/표를 쓰지 않는다. 같은 유형 2회 = 하네스 2-Strike 대상. 다음 플랜들은 도구 출력의 `updated: true` 를 신뢰하지 말고 **`git status` 로 실 변경을 확인**해야 한다.
+
 ---
 
-**Total deviations:** 4 auto-fixed (2 blocking, 1 missing critical, 1 bug)
+**Total deviations:** 5 auto-fixed (2 blocking, 1 missing critical, 2 bug)
 **Impact on plan:** 스코프 확대 없음. 1·2 는 플랜/워크플로 텍스트가 서로 모순되는 지점을 의도 보존 방향으로 푼 것이고, 3 은 문서 1줄이다. 잠긴 결정(D-03·D-10·CP-1·CP-3·CP-5) 은 전부 그대로 집행됐다.
 
 ## Issues Encountered
@@ -144,7 +154,7 @@ completed: 2026-08-06
   2. 훅의 **실 차단 동작은 아직 증명되지 않았다** — 존재·문법·배선만 검증했다. 플랜이 명시적으로 Plan 07 Task 1(V-SC4d)에 위임한 항목이다.
   3. `.gitignore` 는 **이미 tracked 인 파일에는 무력**하다. 현재 tracked 목록에 미디어가 0건임은 히스토리 스캔으로 확인했다(5MB 초과 blob 0, 미디어 확장자 추가 이력 0).
   4. 코드 라이선스(LICENSE 파일)가 아직 없다 — D-07 public repo 전에 결정이 필요하다. 본 플랜 스코프 밖이며 Plan 08(저장소 생성) 후보.
-  5. `gsd-tools state update-progress` 본문 미갱신 결함(Deviation 4)은 **도구 쪽에 그대로 남아 있다** — 다음 플랜들도 STATE.md 본문 바가 뒤처질 수 있으므로, 진행률은 frontmatter 또는 디스크 실측(SUMMARY 파일 수)을 신뢰할 것.
+  5. `gsd-tools` 진행 갱신 결함 2종(Deviation 4·5)은 **도구 쪽에 그대로 남아 있다** — `state update-progress` 는 STATE 본문 바를, `roadmap update-plan-progress` 는 ROADMAP Progress 표를 쓰지 않으면서 둘 다 `updated: true` 를 반환한다. 다음 플랜들은 진행률을 **디스크 실측(SUMMARY 파일 수)** 으로 판정하고, 도구 실행 후 `git status` 로 실 변경을 확인할 것.
 
 ## User Setup Required
 

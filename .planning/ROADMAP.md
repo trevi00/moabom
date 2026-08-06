@@ -209,7 +209,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 기반 + 가드레일 | 0/8 | Planned | - |
+| 1. 기반 + 가드레일 | 1/8 | In Progress | - |
 | 2. 미디어 재생 수직 슬라이스 | 0/TBD | Not started | - |
 | 3. 카탈로그 + 계정/프로필 | 0/TBD | Not started | - |
 | 4. playback 도메인 | 0/TBD | Not started | - |
