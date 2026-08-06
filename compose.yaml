@@ -1,0 +1,94 @@
+name: moabom
+
+# 단일 파일 + profiles 로 dev/full 을 이원화한다 (D-01/D-06).
+# compose.override.yaml 분리는 -f 인자를 강요해 D-03("표준 커맨드 그대로")을 위반한다.
+#   평시 개발 : docker compose up          -> 인프라 4종만 (bootRun 이 자동 기동)
+#   데모/검수 : docker compose --profile full up
+#   리셋      : docker compose down -v
+# D-00: 후반 증설(캐시 서버·읽기 복제본·로드밸런서)은 이 파일에 선반영하지 않는다.
+#       부하를 실측한 뒤 후반 phase 가 추가한다.
+
+services:
+  mysql:
+    image: mysql:8.0
+    # G3 — ngram_token_size 는 read-only 시스템 변수다: 런타임 SET GLOBAL 불가, 기동 인자로만 설정된다.
+    #      나중에 바꾸면 FULLTEXT 인덱스 전량 재구축 (PITFALLS Pitfall 10).
+    #      ⚠️ 아래 3줄은 SchemaMigrationTest 의 withCommand 와 **문자 그대로** 같아야 한다 (CP-10).
+    #         그 테스트는 값 드리프트는 잡지만 누락은 못 잡는다(핀 값이 이미지 기본값과 동일 — 01-04 실측).
+    command:
+      - --ngram_token_size=2
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-moabom-local}
+      MYSQL_DATABASE: moabom
+    # 로컬 개발 전용 — 루프백 바인드로 LAN 노출을 막는다 (T-1-19).
+    ports: ["127.0.0.1:3306:3306"]
+    volumes: ["mysql-data:/var/lib/mysql"]
+    # 스키마/시드의 단일 진실은 Flyway 다. MySQL 이미지의 부트스트랩 SQL 디렉터리를 쓰지 않는다
+    # (Pitfall 14 — 볼륨에 데이터가 있으면 통째로 건너뛰어 "고쳤는데 안 바뀐다" 가 된다).
+    # 리셋 = docker compose down -v.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "--silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  nginx:
+    image: nginx:stable-alpine
+    ports: ["127.0.0.1:8081:80"]
+    volumes:
+      - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # 저장소 밖 미디어 루트 (SC4). :ro — nginx 는 읽기 전용, 쓰기 주체는 ingest(P8) 뿐이다 (T-1-21).
+      - ${MEDIA_ROOT:-D:/moabom-media}:/srv/media:ro
+
+  prometheus:
+    image: prom/prometheus:v3.13.2
+    ports: ["127.0.0.1:9090:9090"]
+    volumes: ["./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+    extra_hosts: ["host.docker.internal:host-gateway"]   # CP-8 (Docker Desktop 에선 불필요하나 무해)
+
+  grafana:
+    image: grafana/grafana:13.1.2
+    ports: ["127.0.0.1:3001:3000"]
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+    depends_on: [prometheus]
+
+  # ---------- profile: full (데모/검수) ----------
+  # 위 4종은 profiles 속성이 없으므로 항상 기동한다. 아래 둘은 --profile full 을 줄 때만 뜬다.
+  app:
+    profiles: ["full"]
+    # 선행 1회: cd backend && ./gradlew bootBuildImage --imageName=moabom-app:local
+    # compose 는 Gradle 을 실행할 수 없다 (CP-3 A안). pull_policy: never 가 이미지 부재를
+    # 레지스트리 인증 오류가 아니라 "이미지 없음" 으로 즉시·명확히 실패시킨다.
+    image: moabom-app:local
+    pull_policy: never
+    depends_on:
+      mysql: { condition: service_healthy }
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/moabom?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-moabom-local}
+      JAVA_TOOL_OPTIONS: "-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8"   # G4
+    # ⚠️ 유일하게 루프백이 아닌 바인드다: prometheus 가 host.docker.internal:8080 으로 스크레이프한다(CP-8/A2).
+    #    루프백으로 조이면 host-gateway 경로가 끊긴다. 잔여 위험은 ADR-0001 에 accept 로 기록(T-1-20).
+    ports: ["8080:8080"]
+
+  web:
+    profiles: ["full"]
+    # ⚠️ 실측(01-03, 반사실 2-arm 프로브 / RESEARCH A3 반증): rewrites 의 destination 은
+    #    `next build` 시점에 .next/routes-manifest.json 으로 구워진다. 런타임 environment 주입은
+    #    무효다 — 그래서 목적지를 build args 로 준다. Dockerfile 기본값과 같은 값이지만,
+    #    compose 만 읽어도 목적지가 드러나도록 명시한다 (D-02).
+    build:
+      context: ./frontend
+      args:
+        BACKEND_ORIGIN: http://app:8080
+        MEDIA_ORIGIN: http://nginx:80
+    depends_on: [app]
+    ports: ["127.0.0.1:3000:3000"]
+
+volumes:
+  mysql-data:
