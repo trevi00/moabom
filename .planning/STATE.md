@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-05-PLAN.md
-last_updated: "2026-08-06T05:35:01.732Z"
-last_activity: 2026-08-06 -- 01-05 완료 (compose profiles 이원화 4/6종 + mysql 기동 파라미터 핀 + nginx/prometheus 설정; 반사실 control arm 6종으로 게이트 판별력 실측)
+stopped_at: Completed 01-06-PLAN.md
+last_updated: "2026-08-06T05:55:59.536Z"
+last_activity: 2026-08-06 -- 01-06 완료 (ADR-0001/0002 + CI 코어 게이트 7종 + Dependabot; 반사실 arm 6종으로 판별력 실측, 인계 대조 커맨드의 vacuous PASS 구멍 1건 발견·차단)
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 8
-  completed_plans: 5
-  percent: 63
+  completed_plans: 6
+  percent: 75
 ---
 
 # Project State
@@ -26,30 +26,30 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 ## Current Position
 
 Phase: 1 (기반 + 가드레일) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 Status: Ready to execute
-Last activity: 2026-08-06 -- 01-05 완료 (compose profiles 이원화 4/6종 + mysql 기동 파라미터 핀 + nginx/prometheus 설정; 반사실 control arm 6종으로 게이트 판별력 실측)
+Last activity: 2026-08-06 -- 01-06 완료 (ADR-0001/0002 + CI 코어 게이트 7종 + Dependabot; 반사실 arm 6종으로 판별력 실측, 인계 대조 커맨드의 vacuous PASS 구멍 1건 발견·차단)
 
-Progress: [██████░░░░] 63%
+Progress: [████████░░] 75%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 5
-- Average duration: 16.4 min
-- Total execution time: 1.4 hours (82 min)
+- Total plans completed: 6
+- Average duration: 15.5 min
+- Total execution time: 1.6 hours (93 min)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 5 / 8 | 82 min | 16.4 min |
+| 01 | 6 / 8 | 93 min | 15.5 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 9 · 21 · 23 · 18 · 11 min
-- Trend: 안정 (최근 2회는 태스크 수가 적어 짧다 — 태스크당 ~6분대로 수렴)
+- Last 6 plans: 9 · 21 · 23 · 18 · 11 · 11 min
+- Trend: 안정 (최근 3회 태스크당 ~4~6분. 01-06 은 태스크 3개에 11분 — 산출물이 문서·설정이라 실행 검증이 짧았고, 시간의 절반이 반사실 arm 6종과 캐시 배제 재실행에 쓰였다)
 
 *Updated after each plan completion*
 | Phase 01 P01 | 9 min | 3 tasks | 5 files |
@@ -57,6 +57,7 @@ Progress: [██████░░░░] 63%
 | Phase 01 P03 | 23 min | 2 tasks | 14 files |
 | Phase 01 P04 | 18 min | 3 tasks | 3 files |
 | Phase 01 P05 | 11 min | 2 tasks | 5 files |
+| Phase 01 P06 | 11 min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -84,6 +85,11 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Phase 01]: 01-05: 플래너 자기모순 4·5회째(alias·initdb 리터럴이 자기 grep acceptance 를 깸) — 리터럴만 재작성. 2-Strike 초과, 플랜 생성 단계 정적 게이트 필요
 - [Phase 01]: 01-05: nginx -t 는 단독으로 판별력 0 — nginx -T 로 우리 conf 로드 확인 후 rc 판정. MSYS 경로변환이 vacuous PASS 를 만들 수 있는 구조
 - [Phase 01]: 01-05: ARCH-05 mark-complete 미실행 (선례 5회째) — compose.yaml 은 생겼으나 증거가 config -q 까지. 실기동 검증은 Plan 07
+- [Phase 01]: 01-06: compose<->SchemaMigrationTest 핀 대조를 CI 스텝으로 신설(01-05 HIGH 인계 해소) — 인계 커맨드의 diff-only 판정은 양쪽 동시 삭제 시 조용히 통과(ARM2 실측)라 개수 선-단언을 앞에 붙였다. 대조 게이트 = 값 일치 + 개수 하한
+- [Phase 01]: 01-06: next 를 Dependabot ignore 에 넣지 않음 — npm audit high 3건의 유일 수정 경로(next@16.3.0)가 잠긴 핀 16.2.12 와 충돌하지만, 그 충돌을 보이게 두는 것이 G1(non-blocking 가시성)의 목적. 억제=가시성 0, 자동머지=핀 파손
+- [Phase 01]: 01-06: CI OPEN guard 는 Modulith 1.1.12 에서 발화 불가한 전방 게이트임을 워크플로 주석에 정직 표기(01-02 javap 실측과 정합) — 게이트를 지우지 않고 1.2+ 상향 시 자동 활성되게 남김
+- [Phase 01]: 01-06: ARCH-01/ARCH-05 mark-complete 미실행(선례 6회째) — 워크플로 파일은 생겼으나 CI 가 0회 실행. '게이트 도달성 확인'은 ROADMAP 이 01-08 에 배정, 실기동은 01-07
+- [Phase 01]: 01-06: 플래너 자기모순 0건(5회 연속 기록 중단) — 다만 금지 리터럴이 <action> 산문에는 존재하는 near-miss. 산문을 산출물 주석으로 옮겨 적으면 acceptance 가 깨진다
 
 ### Pending Todos
 
@@ -102,17 +108,17 @@ None yet.
 - **[문서 불일치, 해소됨]** REQUIREMENTS.md 헤더가 v1 요구사항 "53 total"이라 적었으나 실측 58개. 로드맵은 58개 전부 매핑, REQUIREMENTS.md Coverage 블록 정정 완료.
 - **[Plan 07, HIGH]** 로컬 8080 을 무관한 서비스(EnterpriseDB, PID 5140)가 점유 중 — 백엔드 로컬 기동 전 해제하거나 포트를 옮겨야 한다 (01-03 프로브가 우연히 발견)
 - **[Plan 07, HIGH · Plan 05 소관분 해소]** BACKEND_ORIGIN/MEDIA_ORIGIN 은 런타임 변수가 아니다 — rewrites 목적지는 next build 시점에 구워진다(01-03 A3 반증). ✅ 01-05 에서 compose `web` 을 `build.args` 로 배선하고 README·`.env.example` 주석도 정정. 잔여 = Plan 07 이 full 프로필 실기동으로 `curl :3000/api/health` 200 을 확인하는 것
-- **[Plan 06, MEDIUM]** npm audit high 3건(postcss XSS/경로순회, sharp libvips CVE) — 수정 경로가 next@16.3.0 뿐이라 잠긴 핀 16.2.12 와 충돌. Dependabot 이 붉게 띄울 예정이며 핀 vs CVE 는 사람 판단 필요
-- **[Plan 06, HIGH · Plan 05 소관분 해소]** compose mysql `command:` 3종은 SchemaMigrationTest 의 `withCommand` 와 **문자 그대로** 같아야 한다(CP-10). 이 테스트는 `withCommand` **누락**을 못 잡는다 — 핀 3값이 mysql:8.0 **이미지 기본값과 동일**(01-04 실측). ✅ 01-05 에서 compose 쪽 3종을 넣고 수동 `diff` 로 3/3 일치를 실측(반사실 드리프트 rc=1 확인). 잔여 = **자동 게이트 부재** → 아래 [Plan 06, HIGH] 항목의 커맨드로 CI 에 고정할 것
-- **[Plan 06, MEDIUM]** ubuntu CI 첫 런이 Flyway 한글 인코딩의 실검증 지점이다 — 로컬 Windows 는 green 이지만 CI 미실행. `koreanTitlesRoundTrip` 이 붉어지면 `spring.flyway.encoding: UTF-8` 추가로 대응(시드 ASCII 화 회피 금지). 또한 `./gradlew build` 가 이제 **Docker 를 요구**한다(Testcontainers) — ubuntu-latest 필요, Windows 러너 불가
-- [Plan 06, HIGH] compose<->SchemaMigrationTest 핀 대조 자동 게이트 부재 — 지금은 일치(수동 diff 실측, 반사실 rc=1 확인)지만 한쪽만 고치면 아무도 못 잡는다. CI 에 diff <(grep -oE '\-\-(ngram_token_size|character-set-server|collation-server)=[^"]*' compose.yaml | sort) <(같은 grep on SchemaMigrationTest.java) 추가
+- **[Plan 08+, MEDIUM · Plan 06 소관분 해소]** npm audit high 3건(postcss XSS/경로순회, sharp libvips CVE) — 수정 경로가 next@16.3.0 뿐이라 잠긴 핀 16.2.12 와 충돌. ✅ 01-06 에서 **의도적으로 ignore 하지 않기로 결정** — 억제하면 G1 가시성이 0 이 되고 자동머지하면 핀이 깨진다. 근거를 `dependabot.yml` 주석 + ADR-0001 §3 양쪽에 기록. 잔여 = repo push 후 Dependabot 이 실제로 PR 을 열면 **사람이 핀 vs CVE 를 판단**하는 것
+- **[해소됨 — 01-06]** compose mysql `command:` 3종 ↔ SchemaMigrationTest `withCommand` 문자 일치(CP-10)의 **자동 게이트 부재**. ✅ 01-06 이 CI 스텝 `mysql 기동 파라미터 대조 (G3 / CP-10)` 로 승격. 인계받은 diff-only 판정은 **양쪽 동시 삭제 시 조용히 통과**함을 반사실 ARM2 로 실측해, 값 비교 앞에 **개수 선-단언(3종)** 을 배치했다. 잔여 = 이 스텝이 실제로 도는지는 CI 첫 런(01-08) 관측 대상
+- **[Plan 08, MEDIUM]** ubuntu CI 첫 런이 Flyway 한글 인코딩의 실검증 지점이다 — 로컬 Windows 는 green(01-06 에서 캐시 배제 실행으로 10/10 재확인)이지만 CI 미실행. `koreanTitlesRoundTrip` 이 붉어지면 `spring.flyway.encoding: UTF-8` 추가로 대응(시드 ASCII 화 회피 금지). 또한 `./gradlew build` 가 **Docker 를 요구**한다(Testcontainers) — ci.yml 은 `ubuntu-latest` 로 고정됨
 - [Plan 07, HIGH] Git Bash 로컬 검증엔 MSYS_NO_PATHCONV=1 필수 — '/' 로 시작하는 grep 패턴과 docker run -v 의 컨테이너측 경로가 C:/Program Files/Git/... 로 변환된다. 없으면 조용히 통과하는 vacuous PASS 경로 존재(nginx -t 가 우리 conf 를 안 보고도 rc=0). ubuntu CI 는 무영향
 - [Plan 07, MEDIUM] MEDIA_ROOT(D:/moabom-media) 바인드는 파싱만 확인됨 — Docker Desktop 의 D: 드라이브 파일 공유 설정에 따라 실기동에서 마운트 실패 가능. 캐시 헤더(m3u8/세그먼트) 실검증은 실 파일이 없어 P2 소관
+- [Plan 08, MEDIUM] CI 2회차 이후 런에서 `:test` 가 build cache 로 서빙될 가능성 — 로컬에서 `./gradlew build` 가 UP-TO-DATE, `cleanTest test` 가 FROM-CACHE 로 두 번 연속 BUILD SUCCESSFUL 을 내면서 테스트를 한 줄도 실행하지 않았다(01-06 실측). gradle/actions/setup-gradle 이 Gradle user home 을 복원하므로 CI 도 동형일 수 있다(미실측). 첫 런은 캐시가 비어 반드시 실행되므로 전제는 유지되나, **초록 체크마크가 아니라 로그에서 `:test` 실행과 tests= 수를 확인**할 것
 
 ## Session Continuity
 
-Last session: 2026-08-06T05:34:47.602Z
-Stopped at: Completed 01-05-PLAN.md
+Last session: 2026-08-06T05:55:23.354Z
+Stopped at: Completed 01-06-PLAN.md
 Resume file: None
 
-Next: `/kha-execute-phase 1` (01-06-PLAN.md — ADR + CI 코어 게이트 + Dependabot, wave 3)
+Next: `/kha-execute-phase 1` (01-07-PLAN.md — 반사실 프로브 V-SC2d/V-SC4d + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수, wave 4)

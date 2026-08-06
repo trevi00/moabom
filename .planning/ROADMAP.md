@@ -65,7 +65,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 01-03-PLAN.md — frontend Next 16.2.12 얇은 골격 + rewrites 단일 진입 오리진 + FE Dockerfile [wave 1]
 - [x] 01-04-PLAN.md — Flyway 스키마 단일 진실(V1 title + V2 한글 골든/CC-BY 시드) + SchemaMigrationTest [wave 2]
 - [x] 01-05-PLAN.md — compose profiles 이원화 + mysql 기동 파라미터(G3) + nginx/prometheus 설정 [wave 2]
-- [ ] 01-06-PLAN.md — ADR-0001(EOL/CVE 정책) + ADR-0002(미디어·인코딩·D-14) + CI 코어 게이트 + Dependabot [wave 3]
+- [x] 01-06-PLAN.md — ADR-0001(EOL/CVE 정책) + ADR-0002(미디어·인코딩·D-14) + CI 코어 게이트 + Dependabot [wave 3]
 - [ ] 01-07-PLAN.md — 반사실 프로브 2건(V-SC2d/V-SC4d) + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수 [wave 4]
 - [ ] 01-08-PLAN.md — master→main 전환 + GitHub public repo 생성/push + CI 첫 런 게이트 도달성 확인 [wave 5]
 
