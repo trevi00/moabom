@@ -1,0 +1,67 @@
+plugins {
+  id 'java'
+  id 'org.springframework.boot' version '3.2.12'
+  id 'io.spring.dependency-management' version '1.1.7'
+  id 'jacoco'
+}
+
+group = 'com.moabom'
+version = '0.0.1-SNAPSHOT'
+
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+
+ext { set('springModulithVersion', '1.1.12') }
+
+repositories { mavenCentral() }
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+  implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+  // starter-jpa 는 P3: JpaEventPublication @Entity 가 ddl-auto=validate 와 충돌한다(D-14 / RESEARCH CP-4).
+  implementation 'org.springframework.modulith:spring-modulith-starter-core'
+  runtimeOnly    'org.springframework.modulith:spring-modulith-actuator'
+
+  // 복원력 — Boot BOM 미관리. 2.3.0 은 Boot3+Java17 에서 기동 실패(resilience4j issue #2265) → 절대 bump 금지.
+  // 회귀 게이트: .github/workflows/ci.yml 의 "resilience4j pin gate (G2)" 스텝.
+  implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+
+  runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+  runtimeOnly 'com.mysql:mysql-connector-j'
+  implementation 'org.flywaydb:flyway-core'
+  implementation 'org.flywaydb:flyway-mysql'      // MySQL 8 은 이 모듈 없으면 Unsupported Database
+
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
+  // Boot 3.2 의 구성명은 developmentOnly 다. 3.4+ 문서에 나오는 test 겸용 구성명을 복붙하면
+  // 3.2 에서 "구성을 찾을 수 없음" 으로 죽는다 (RESEARCH §State of the Art 의 버전 드리프트 함정).
+  developmentOnly 'org.springframework.boot:spring-boot-docker-compose'
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
+  testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+  testImplementation 'org.testcontainers:mysql'
+  testImplementation 'org.testcontainers:junit-jupiter'
+}
+
+dependencyManagement {
+  imports { mavenBom "org.springframework.modulith:spring-modulith-bom:${springModulithVersion}" }
+}
+
+// G2 집행: CI dependencyInsight 게이트는 가시성, strictly/force 는 실제 강제.
+configurations.all {
+  resolutionStrategy {
+    force 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+  }
+}
+
+// G4 — 인코딩 명시 (Windows 개발 + ubuntu CI 혼합)
+tasks.withType(JavaCompile).configureEach { options.encoding = 'UTF-8' }
+tasks.withType(Test).configureEach {
+  useJUnitPlatform()
+  systemProperty 'file.encoding', 'UTF-8'
+  systemProperty 'sun.jnu.encoding', 'UTF-8'
+}
+jacoco { toolVersion = '0.8.12' }

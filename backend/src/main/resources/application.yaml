@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: moabom
+
+  # D-01: 평시 개발은 bootRun 이 인프라 compose 를 자동 기동한다.
+  # profiles.active 를 지정하지 않는다 = 무프로필(인프라) 서비스만 → app 컨테이너가 8080 을 다투지 않는다.
+  docker:
+    compose:
+      file: "../compose.yaml"          # 작업 디렉터리 backend/ 기준 → 루트 compose
+      lifecycle-management: start-only # bootRun 종료 시 인프라를 내리지 않음
+
+  # ConnectionDetails(docker-compose / Testcontainers)가 있으면 그쪽이 우선한다. 아래는 폴백 + full 프로필 env 오버라이드 대상.
+  datasource:
+    url: jdbc:mysql://localhost:3306/moabom?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: root
+    password: moabom-local
+
+  jpa:
+    hibernate:
+      ddl-auto: validate      # 스키마 단일 진실은 Flyway (PITFALLS Pitfall 14). update/create 금지.
+    open-in-view: false
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+  # D-14: event_publication DDL 은 @ApplicationModuleListener 첫 사용 phase(P3 예상)의 V 마이그레이션이 소유한다.
+  #       Modulith 의 자동 스키마 생성을 명시적으로 끈다 (기본값이지만 규율을 코드로 남긴다).
+  #       ⚠️ 이 프로퍼티 키 이름은 Modulith 버전 간 변경 이력이 있다 — P3 착수 시 실측 재확인 대상(STATE.md 블로커).
+  modulith:
+    events:
+      jdbc:
+        schema-initialization:
+          enabled: false
+
+# ASVS V14 / RESEARCH §Security Domain: 전체 노출("*") 금지. /env·/heapdump·/configprops 유출 표면을 만들지 않는다.
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+server:
+  port: 8080
