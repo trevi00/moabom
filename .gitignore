@@ -1,0 +1,41 @@
+# ===== 미디어 격리 (PITFALLS Pitfall 3 / RESEARCH CP-1) =====
+# ⚠️ 전역 *.ts 금지: MPEG-TS 세그먼트와 TypeScript 확장자가 충돌한다.
+#    MPEG-TS 는 경로 스코프로만 배제하고, 크기 게이트(.githooks/pre-commit, 5MB)가 2차 방어다.
+media/
+transcode-tmp/
+uploads/
+*.mp4
+*.mkv
+*.mov
+*.avi
+*.webm
+*.m4s
+*.flv
+*.wmv
+*.mpg
+*.mpeg
+media/**/*.ts
+**/hls/**/*.ts
+
+# ===== 시크릿 =====
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+
+# ===== 빌드 산출물 =====
+backend/build/
+backend/.gradle/
+backend/bin/
+frontend/.next/
+frontend/node_modules/
+frontend/out/
+
+# ===== IDE / OS =====
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
