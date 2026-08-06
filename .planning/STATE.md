@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-03-PLAN.md
-last_updated: "2026-08-06T04:58:32.179Z"
-last_activity: 2026-08-06 -- 01-03 완료 (Next 16.2.12 골격 + rewrites 단일 진입 오리진 + FE standalone 이미지; RESEARCH A3 반증)
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-08-06T05:18:58.200Z"
+last_activity: 2026-08-06 -- 01-04 완료 (Flyway V1 스키마 + V2 한글 골든/CC-BY 시드 + SchemaMigrationTest 6종; 반사실 프로브로 판별력 실측)
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 8
-  completed_plans: 3
-  percent: 38
+  completed_plans: 4
+  percent: 50
 ---
 
 # Project State
@@ -26,11 +26,11 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 ## Current Position
 
 Phase: 1 (기반 + 가드레일) — EXECUTING
-Plan: 4 of 8
+Plan: 5 of 8
 Status: Ready to execute
-Last activity: 2026-08-06 -- 01-03 완료 (Next 16.2.12 골격 + rewrites 단일 진입 오리진 + FE standalone 이미지; RESEARCH A3 반증)
+Last activity: 2026-08-06 -- 01-04 완료 (Flyway V1 스키마 + V2 한글 골든/CC-BY 시드 + SchemaMigrationTest 6종; 반사실 프로브로 판별력 실측)
 
-Progress: [████░░░░░░] 38%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -55,6 +55,7 @@ Progress: [████░░░░░░] 38%
 | Phase 01 P01 | 9 min | 3 tasks | 5 files |
 | Phase 01 P02 | 21 min | 3 tasks | 37 files |
 | Phase 01 P03 | 23 min | 2 tasks | 14 files |
+| Phase 01 P04 | 18 min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -75,6 +76,9 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Phase 01]: 01-03: RESEARCH A3 반증 — rewrites destination 은 next build 시점에 routes-manifest.json 으로 구워지고 런타임 env 는 무시된다 (반사실 2-arm 실측). Dockerfile 이 목적지를 ARG 로 받고 기본값을 full 프로필(app:8080/nginx:80)로 둔다 — compose 는 build.args, .env 런타임 주입은 무효
 - [Phase 01]: 01-03: create-next-app 잔재 삭제(page.module.css/favicon/svg 5종/보일러플레이트 README) + AGENTS.md·CLAUDE.md 유지 — D-05 얇게 vs Next16 학습데이터 경고의 실용 가치
 - [Phase 01]: 01-03: ARCH-05 mark-complete 미실행 (01-01·01-02 선례) — compose.yaml 부재, 7개 플랜 공유 요구사항
+- [Phase 01]: 01-04: G3 게이트가 withCommand 누락은 못 잡는다 — 핀 3값이 mysql:8.0 이미지 기본값과 동일(mysqld --verbose --help 실측). 값 드리프트는 잡는다(반사실 2->3 = expected 2/but was 3). compose<->test 대조 게이트는 compose 가 실재하는 Plan 05/07 소관
+- [Phase 01]: 01-04: TDD RED 구조적 미성립(V1/V2 선행) — 위조하지 않고 반사실 프로브 4종으로 판별력 실측 후 revert. tests=6 failures=4 -> 복원 green 10/10
+- [Phase 01]: 01-04: ARCH-05 mark-complete 미실행 (선례 4회째) — compose.yaml 부재, 7개 플랜 공유 요구사항
 
 ### Pending Todos
 
@@ -94,11 +98,13 @@ None yet.
 - **[Plan 07, HIGH]** 로컬 8080 을 무관한 서비스(EnterpriseDB, PID 5140)가 점유 중 — 백엔드 로컬 기동 전 해제하거나 포트를 옮겨야 한다 (01-03 프로브가 우연히 발견)
 - **[Plan 05/07, HIGH]** BACKEND_ORIGIN/MEDIA_ORIGIN 은 런타임 변수가 아니다 — rewrites 목적지는 next build 시점에 구워진다(01-03 A3 반증). compose FE 서비스는 build.args 로 줘야 하고 .env 런타임 주입은 효과가 없다
 - **[Plan 06, MEDIUM]** npm audit high 3건(postcss XSS/경로순회, sharp libvips CVE) — 수정 경로가 next@16.3.0 뿐이라 잠긴 핀 16.2.12 와 충돌. Dependabot 이 붉게 띄울 예정이며 핀 vs CVE 는 사람 판단 필요
+- **[Plan 05/07, HIGH]** compose mysql `command:` 3종은 SchemaMigrationTest 의 `withCommand` 와 **문자 그대로** 같아야 한다(CP-10). 그런데 이 테스트는 `withCommand` **누락**을 못 잡는다 — 핀 3값(ngram_token_size=2·utf8mb4·utf8mb4_0900_ai_ci)이 mysql:8.0 **이미지 기본값과 동일**함을 실측(`mysqld --verbose --help`). 값 드리프트는 잡는다. compose↔test 대조 게이트가 필요하다
+- **[Plan 06, MEDIUM]** ubuntu CI 첫 런이 Flyway 한글 인코딩의 실검증 지점이다 — 로컬 Windows 는 green 이지만 CI 미실행. `koreanTitlesRoundTrip` 이 붉어지면 `spring.flyway.encoding: UTF-8` 추가로 대응(시드 ASCII 화 회피 금지). 또한 `./gradlew build` 가 이제 **Docker 를 요구**한다(Testcontainers) — ubuntu-latest 필요, Windows 러너 불가
 
 ## Session Continuity
 
-Last session: 2026-08-06T04:56:59.816Z
-Stopped at: Completed 01-03-PLAN.md
+Last session: 2026-08-06T05:18:58.193Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
 
 Next: `/kha-plan-phase 1`

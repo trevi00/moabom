@@ -63,7 +63,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 01-01-PLAN.md — 저장소 가드레일: .gitignore(CP-1 준수)/.gitattributes/.editorconfig/pre-commit 훅/README + 저장소 밖 미디어 루트 [wave 1]
 - [x] 01-02-PLAN.md — backend Gradle 8.14.5 스캐폴딩 + Modulith 8모듈 골격 + ModularityTests(verify) [wave 1]
 - [x] 01-03-PLAN.md — frontend Next 16.2.12 얇은 골격 + rewrites 단일 진입 오리진 + FE Dockerfile [wave 1]
-- [ ] 01-04-PLAN.md — Flyway 스키마 단일 진실(V1 title + V2 한글 골든/CC-BY 시드) + SchemaMigrationTest [wave 2]
+- [x] 01-04-PLAN.md — Flyway 스키마 단일 진실(V1 title + V2 한글 골든/CC-BY 시드) + SchemaMigrationTest [wave 2]
 - [ ] 01-05-PLAN.md — compose profiles 이원화 + mysql 기동 파라미터(G3) + nginx/prometheus 설정 [wave 2]
 - [ ] 01-06-PLAN.md — ADR-0001(EOL/CVE 정책) + ADR-0002(미디어·인코딩·D-14) + CI 코어 게이트 + Dependabot [wave 3]
 - [ ] 01-07-PLAN.md — 반사실 프로브 2건(V-SC2d/V-SC4d) + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수 [wave 4]
@@ -209,7 +209,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 기반 + 가드레일 | 3/8 | In Progress | - |
+| 1. 기반 + 가드레일 | 4/8 | In Progress | - |
 | 2. 미디어 재생 수직 슬라이스 | 0/TBD | Not started | - |
 | 3. 카탈로그 + 계정/프로필 | 0/TBD | Not started | - |
 | 4. playback 도메인 | 0/TBD | Not started | - |
