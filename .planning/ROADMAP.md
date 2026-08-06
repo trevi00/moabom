@@ -12,7 +12,7 @@ M1(MVP 7종)은 **위험 역순 배치를 구조로 금지**하는 순서로 간
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: 기반 + 가드레일** - 한 커맨드 기동 + Modulith 경계 CI 게이트 + 스키마/미디어 격리 규율
+- [x] **Phase 1: 기반 + 가드레일** - 한 커맨드 기동 + Modulith 경계 CI 게이트 + 스키마/미디어 격리 규율 (completed 2026-08-06)
 - [ ] **Phase 2: 미디어 재생 수직 슬라이스** - 앱 Java 0줄로 HLS ABR 재생 + 새로고침 재개 실증 (최고 위험 선제 해소)
 - [ ] **Phase 3: 카탈로그 + 계정/프로필** - 가구 1계정 N프로필 격리 축 + 발행 상태를 가진 카탈로그
 - [ ] **Phase 4: playback 도메인** - 서버 저장 이어보기 + 완료 임계값 + 자막 + 오류 복구 (Core Value 폐곡선)
@@ -209,7 +209,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 기반 + 가드레일 | 8/8 | Complete | 2026-08-06 |
+| 1. 기반 + 가드레일 | 8/8 | Complete    | 2026-08-06 |
 | 2. 미디어 재생 수직 슬라이스 | 0/TBD | Not started | - |
 | 3. 카탈로그 + 계정/프로필 | 0/TBD | Not started | - |
 | 4. playback 도메인 | 0/TBD | Not started | - |
