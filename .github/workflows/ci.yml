@@ -1,0 +1,100 @@
+name: ci
+
+# D-09: P1 은 최소 코어 게이트만 돈다. 프런트엔드 빌드·브라우저 E2E·커버리지 임계·배포 잡은
+#       여기에 넣지 않는다 — 이후 phase 가 소비자가 생기는 시점에 증설한다.
+# D-08: main 직접 push 트리거 (PR-only 아님, solo 모드).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  core:
+    runs-on: ubuntu-latest          # Testcontainers 가 Docker 를 요구한다 (STACK §2.9: Windows 러너 불가)
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0            # SC4 히스토리 스캔에 전체 이력이 필요하다.
+                                    # 없으면 얕은 클론만 보고 조용히 통과한다 = 게이트가 아무것도 안 보는 상태.
+
+      - name: media guard (SC4)
+        run: |
+          big=$(git rev-list --objects --all \
+            | git cat-file --batch-check='%(objecttype) %(objectname) %(objectsize) %(rest)' \
+            | awk '$1=="blob" && $3 > 5242880 {print $3, $4}')
+          if [ -n "$big" ]; then echo "$big"; echo "::error::5MB 초과 blob 이 히스토리에 있습니다"; exit 1; fi
+          hits=$(git log --all --diff-filter=A --name-only --pretty=format: | sort -u \
+            | grep -Ei '\.(mp4|mkv|mov|avi|webm|m4s|flv|wmv)$' || true)
+          if [ -n "$hits" ]; then echo "$hits"; echo "::error::미디어 파일이 커밋된 적이 있습니다"; exit 1; fi
+
+      - name: gitignore sanity (CP-1 회귀 / V-SC4c)
+        run: |
+          git check-ignore -q media/probe.mp4 \
+            || { echo "::error::.gitignore 가 미디어를 매칭하지 않습니다"; exit 1; }
+          if git check-ignore -q frontend/next.config.ts; then
+            echo "::error::CP-1 회귀 — TypeScript 소스가 .gitignore 에 걸립니다"; exit 1
+          fi
+          git check-ignore -q .env \
+            || { echo "::error::.env 가 무시되지 않습니다"; exit 1; }
+
+      - name: modulith OPEN guard (SC2 / V-SC2b)
+        run: |
+          # shared 외의 Type.OPEN 은 사이클 탐지에서 제외돼 경계가 소멸한다 (PITFALLS Pitfall 5).
+          # ⚠️ 정직 표기: 잠긴 핀 Modulith 1.1.12 의 @ApplicationModule 에는 그 속성 자체가 없다(01-02 javap 실측).
+          #    따라서 이 게이트는 오늘 발화할 수 없는 전방 회귀 게이트다 — Modulith 1.2+ 로 올리는 순간 살아난다.
+          hits=$(grep -rln 'Type\.OPEN' backend/src/main/java --include='package-info.java' \
+                 | grep -v '/shared/' || true)
+          if [ -n "$hits" ]; then echo "$hits"; echo "::error::shared 외 모듈에 Type.OPEN"; exit 1; fi
+
+      - name: module declaration coverage (SC2 / V-SC2c)
+        run: |
+          n=$(ls backend/src/main/java/com/moabom/*/package-info.java | wc -l)
+          [ "$n" -eq 8 ] || { echo "::error::모듈 package-info 가 8개가 아닙니다 (실측 $n)"; exit 1; }
+          m=$(grep -l 'ApplicationModule' backend/src/main/java/com/moabom/*/package-info.java | wc -l)
+          [ "$m" -eq 8 ] || { echo "::error::@ApplicationModule 선언이 8개가 아닙니다 (실측 $m)"; exit 1; }
+
+      - name: mysql 기동 파라미터 대조 (G3 / CP-10)
+        run: |
+          # compose 와 SchemaMigrationTest 의 withCommand 는 문자 그대로 같아야 한다.
+          # 그 테스트는 값 드리프트는 잡지만 누락은 못 잡는다 — 핀 3값이 mysql:8.0 이미지 기본값과
+          # 동일하기 때문이다(01-04 실측). 그래서 대조는 여기서 한다.
+          pat='--(ngram_token_size|character-set-server|collation-server)=[^",]*'
+          a=$(grep -oE -- "$pat" compose.yaml | sort)
+          b=$(grep -oE -- "$pat" backend/src/test/java/com/moabom/SchemaMigrationTest.java | sort)
+          # 양쪽이 함께 사라지면 diff 는 통과한다 — 개수를 먼저 못박아 그 vacuous PASS 를 막는다.
+          [ "$(printf '%s\n' "$a" | grep -c .)" -eq 3 ] \
+            || { echo "::error::compose.yaml 의 mysql 기동 파라미터가 3종이 아닙니다"; echo "$a"; exit 1; }
+          if [ "$a" != "$b" ]; then
+            echo "compose : $a"; echo "test    : $b"
+            echo "::error::compose 와 SchemaMigrationTest 의 mysql 기동 파라미터가 어긋났습니다"; exit 1
+          fi
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: build + test (ApplicationModules.verify() + SchemaMigrationTest 포함)
+        working-directory: backend
+        run: ./gradlew build --no-daemon
+
+      - name: resilience4j pin gate (G2 / V-G2a)
+        working-directory: backend
+        run: |
+          out=$(./gradlew -q dependencyInsight --configuration runtimeClasspath \
+                --dependency io.github.resilience4j:resilience4j-spring-boot3)
+          echo "$out"
+          echo "$out" | grep -q '2\.2\.0' \
+            || { echo "::error::resilience4j 2.2.0 핀 이탈"; exit 1; }
+          if echo "$out" | grep -q '2\.3\.'; then
+            echo "::error::2.3.x 유입 — Boot3+Java17 기동 실패(resilience4j issue #2265)"; exit 1
+          fi
+
+      - name: compose config validity (ARCH-05 저비용 프록시 / V-SC1a)
+        run: docker compose --profile full config -q
