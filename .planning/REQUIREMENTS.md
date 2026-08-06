@@ -88,11 +88,11 @@ Requirements for initial release (M1 = MVP 7종 전체, 2026-08-05 승인). Each
 
 ### 아키텍처·운영 (ARCH)
 
-- [ ] **ARCH-01**: Spring Modulith 6모듈 경계 (catalog/playback/profile/recommendation/ingest/experiment) + `ApplicationModules.verify()` CI 게이트
+- [x] **ARCH-01**: Spring Modulith 6모듈 경계 (catalog/playback/profile/recommendation/ingest/experiment) + `ApplicationModules.verify()` CI 게이트
 - [ ] **ARCH-02**: Resilience4j — 추천 실패 시 비개인화 행 폴백 (in-JVM이라 스레드 격리 아님을 정직 표기; ARCHITECTURE 근거)
 - [ ] **ARCH-03**: nginx 정적 HLS 서빙 + 캐시 — m3u8와 세그먼트 캐시 정책 분리
 - [ ] **ARCH-04**: 관측 — Actuator + Prometheus + Grafana
-- [ ] **ARCH-05**: docker-compose 한 번으로 전 스택 기동 (mysql·nginx·prometheus·grafana)
+- [x] **ARCH-05**: docker-compose 한 번으로 전 스택 기동 (mysql·nginx·prometheus·grafana)
 
 ### 법적·콘텐츠 (LGL)
 
@@ -201,11 +201,11 @@ Which phases cover which requirements. Filled during roadmap creation (2026-08-0
 | INGST-11 | Phase 8 | Pending | — |
 | INGST-12 | Phase 3 | Pending | 발행 결정권은 catalog 소유. ingest는 P8에서 상태 전이 구동자로 합류 |
 | INGST-13 | Phase 8 | Pending | — |
-| ARCH-01 | Phase 1 | Pending | — |
+| ARCH-01 | Phase 1 | Complete | — |
 | ARCH-02 | Phase 6 | Pending | — |
 | ARCH-03 | Phase 2 | Pending | — |
 | ARCH-04 | Phase 6 | Pending | 계측 대상(서킷 CLOSED→OPEN 전이)이 생기는 지점 |
-| ARCH-05 | Phase 1 | Pending | — |
+| ARCH-05 | Phase 1 | Complete | — |
 | LGL-01 | Phase 5 | Pending | 표기가 사용자에게 노출되는 지점. 스키마 컬럼(attribution/license)은 P1 가드레일 산출물 |
 
 **Coverage:**

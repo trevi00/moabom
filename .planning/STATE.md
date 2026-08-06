@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: executing
-stopped_at: Completed 01-07-PLAN.md
-last_updated: "2026-08-06T06:25:37.665Z"
-last_activity: 2026-08-06 -- 01-07 완료 (반사실 프로브 2건으로 게이트 '작동' 증명 + full 6서비스 실기동; A5/A6 확인·A2 반증→scrape 2분리·A3 대체구조 실동작 확인, 호스트 8080 이중 LISTEN 신규 적발)
+status: verifying
+stopped_at: Completed 01-08-PLAN.md (Phase 1 완료 8/8)
+last_updated: "2026-08-06T06:49:22.677Z"
+last_activity: 2026-08-06
 progress:
   total_phases: 8
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 8
-  completed_plans: 7
-  percent: 88
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 
 ## Current Position
 
-Phase: 1 (기반 + 가드레일) — EXECUTING
+Phase: 1 (기반 + 가드레일) — COMPLETE (8/8 플랜)
 Plan: 8 of 8
-Status: Ready to execute
-Last activity: 2026-08-06 -- 01-07 완료 (반사실 프로브 2건으로 게이트 '작동' 증명 + full 6서비스 실기동; A5/A6 확인·A2 반증→scrape 2분리·A3 대체구조 실동작 확인, 호스트 8080 이중 LISTEN 신규 적발)
+Status: Phase complete — ready for verification
+Last activity: 2026-08-06 -- 01-08 완료 (master→main 전환 + 공개 저장소 trevi00/moabom push + CI 첫 런 게이트 8종 green; :test 실 실행을 3갈래로 증명, 2회차 런이 테스트 0건으로 green 임을 신규 실측, ARCH-01/ARCH-05 7회 이월분 착지)
 
-Progress: [█████████░] 88%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -59,6 +59,7 @@ Progress: [█████████░] 88%
 | Phase 01 P05 | 11 min | 2 tasks | 5 files |
 | Phase 01 P06 | 11 min | 3 tasks | 4 files |
 | Phase 01 P07 | 28 min | 3 tasks | 5 files |
+| Phase 01 P08 | 17 | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,10 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Phase 01]: 01-07: 호스트 8080 이중 LISTEN = (c) 현 상태 수용 + Phase 2 이월. httpd.exe(5140)와 Docker 가 동시 LISTEN 성공(Windows SO_REUSEADDR), 출처에 따라 응답자 갈림(localhost=Spring / 컨테이너 gateway=Apache). Linux 면 바인드 실패로 즉시 드러났을 조건
 - [Phase 01]: 01-07: 빌더 다이제스트는 기록이지 핀이 아님 — build.gradle 은 여전히 :latest. 재현성 미확보를 ADR 6 에 명시. 핀 승격 조건 = 날짜에 따라 빌드가 갈리는 사고 1회
 - [Phase 01]: 01-07: ARCH-01/ARCH-05 mark-complete 미실행 (선례 7회째) — CI 0회 실행 + 문서대로의 한 커맨드 기동이 이 머신에서 미충족(grafana 3001 바인드 실패, 오버레이 시에만 exit 0)
+- [Phase 01]: 01-08: push protection 을 플랜 명세 순서(push 이후)가 아니라 첫 push 이전에 활성화 — 그대로 하면 43커밋 일괄 push 가 GitHub 측 방어 없이 통과해 must_haves 첫 문장(가드레일이 첫 push 이전에 존재)과 어긋난다. 멱등 PATCH 라 비용 0
+- [Phase 01]: 01-08: ARCH-01/ARCH-05 mark-complete — 7회 이월 착지. ARCH-01 은 CI 실행 관측으로 조건 충족. ARCH-05 는 caveat 명기 후 체크(6서비스 실기동은 01-07 증명, 잔여 3001 점유는 무관 컨테이너에 의한 환경 조건이지 산출물 결함 아님 — 리뷰어 반대 가능 지점이라 근거를 SUMMARY 에 병기)
+- [Phase 01]: 01-08: CI 캐시 구멍을 발견했으나 ci.yml 미수정 — D-09 가 P1 CI 범위를 잠갔고 해소안 3종이 CI 시간·판별력 트레이드오프를 가진다((b) 개수단언은 단독으로는 무효). 게이트 정책 변경은 '확인+기록' 태스크 범위 밖 → 대가 표와 함께 Phase 2 operator 결정으로 이월
+- [Phase 01]: 01-08: 플래너 자기모순 6회차 재발(01-06 의 0건 기록 중단) — 플랜 로그 템플릿의 결론 자리표시자가 자기 acceptance(해당 영단어 0회)를 깬다. 실측값으로 치환 + 한국어 서술로 회피. 플랜 생성 단계 정적 게이트 필요성 재확인
 
 ### Pending Todos
 
@@ -123,16 +128,20 @@ None yet.
 - [operator, MEDIUM] 01-HUMAN-UAT.md U-1~U-5 미확인 (status: partial). T3 승인은 HTTP 대리 검증 근거였고 육안 렌더 3종 + 문서 설득력 판단 2종은 사람 몫으로 남았다
 - [Phase 3, MEDIUM] app 의 0.0.0.0:8080 발행이 근거를 잃음 — A2 대안으로 메트릭이 compose 네트워크로 들어오므로 LAN 노출을 감수할 이유가 사라졌다(ADR-0001 7/9). 루프백 조임은 dev 워크플로·README 동반 변경이라 보류
 - [Phase 6, LOW] Grafana 대시보드는 moabom-app-container 와 moabom-app-host 두 job 을 합집합으로 질의해야 한다 — 어느 모드든 하나는 항상 DOWN 인 것이 설계다
+- [Phase 2 착수 전, HIGH · 01-08 신규 실측] CI 2회차 이후 런이 테스트 0건으로 green — run 31078140031 이 build cache 를 복원해 ':test FROM-CACHE' + '4 executed, 3 from cache' + 10s(1회차 1m34s). 01-06 의 추정이 CI 층 관측으로 확정됐다. 첫 런의 도달성 증거는 유효(캐시 비어 있었음)하나 이후 초록은 실행 증거가 아니다. T-1-39 완화가 첫 런 1회만 덮는다는 한계 표면화. 해소안 (a)테스트만 캐시배제 (b)개수 하한 단언 — 단독 무효, XML 도 함께 복원됨 (c)수용. 권장 (a)+(b), operator 결정
+- [operator, MEDIUM · 01-08] LICENSE 파일 부재 — 공개 포트폴리오 저장소에 라이선스가 없으면 기본 all-rights-reserved 로 해석돼 리뷰어 감점 요인. 플랜 명세에 없어 임의 추가하지 않았다(라이선스 선택은 사용자 결정). README 는 상표 회피·CC-BY attribution 을 이미 다루므로 저작권 리스크 자체는 낮음
+- [Phase 2 착수 전, HIGH · 01-08 실측 재확인] ffmpeg/ffprobe 가 PATH 에 없다 (which 둘 다 미발견, ffmpeg -version → command not found). STACK 지목 버전 8.0.3. ingest 의 ProcessBuilder 어댑터 전제라 P2 HLS 스파이크가 이것 없이 시작 불가
 
 ## Session Continuity
 
-Last session: 2026-08-06T06:25:02.794Z
-Stopped at: Completed 01-07-PLAN.md
+Last session: 2026-08-06T06:48:39.501Z
+Stopped at: Completed 01-08-PLAN.md (Phase 1 완료 8/8)
 Resume file: None
 
 Next: `/kha-execute-phase 1` (01-08-PLAN.md — master→main 전환 + GitHub public repo 생성/push + **CI 첫 런 게이트 도달성 확인**, wave 5 / Phase 1 마지막)
 
 01-08 이 Phase 1 의 마지막 플랜이며, 여기서 처음으로 CI 가 실제로 돈다. 그때 확인할 것:
+
 - ARCH-01 / ARCH-05 mark-complete (7회 미룬 것 — 01-08 이 마지막 기여 플랜)
 - 게이트 7종의 **실 발화** (초록 체크마크가 아니라 로그의 `:test` 실행 + `tests=` 수)
 - 미디어 히스토리 스캔의 첫 발화 (로컬 훅의 실 boundary)
