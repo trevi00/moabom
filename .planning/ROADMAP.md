@@ -55,11 +55,19 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Depends on**: Nothing (first phase)
 **Requirements**: ARCH-01, ARCH-05
 **Success Criteria** (what must be TRUE):
-  1. `docker compose up` 한 번으로 mysql·nginx·prometheus·grafana + 앱이 기동하고 앱 헬스 엔드포인트가 응답한다
-  2. Modulith 8모듈(catalog/playback/profile/recommendation/experiment/ingest + bff + shared) 빈 골격에서 `ApplicationModules.verify()`가 green이고, 경계를 위반한 커밋은 CI에서 실패한다
+  1. 앱 이미지 선행 빌드 1회(`cd backend && ./gradlew bootBuildImage --imageName=moabom-app:local`) 후 `docker compose --profile full up` **한 커맨드**로 mysql·nginx·prometheus·grafana + 앱 + FE 가 기동하고 `curl http://localhost:3000/api/health` 가 200 을 반환한다 — compose 는 Gradle 을 실행할 수 없으므로 "한 커맨드"는 빌드 스텝 이후를 뜻한다 (RESEARCH CP-3 A안, D-01·D-03 유지)
+  2. Modulith 8모듈(catalog/playback/profile/recommendation/experiment/ingest + bff + shared) 빈 골격에서 `ApplicationModules.verify()`가 green이고, 경계를 위반한 커밋은 CI에서 실패한다 (반사실 프로브 V-SC2d 로 증명 — 게이트의 존재는 게이트의 작동이 아니다)
   3. 빈 DB에 Flyway 마이그레이션만 돌려도 스키마 + 한글 골든 시드가 재현되고, title 테이블에 attribution/license 컬럼이 존재한다
-  4. 미디어 파일이 저장소 히스토리에 들어가지 못한다 — 미디어 루트가 저장소 밖(`D:/moabom-media/`)이고 `.gitignore`가 첫 커밋 이전에 존재한다
-**Plans**: TBD
+  4. 미디어 파일이 저장소 히스토리에 들어가지 못한다 — 미디어 루트가 저장소 밖(`D:/moabom-media/`)이고 `.gitignore`·pre-commit 훅·CI 히스토리 스캔이 **첫 push 이전**에 존재한다 (planning 커밋 5개가 선행하므로 "첫 커밋 이전"은 사후 만족 불가 — 정직 재서술). 차단 여부는 반사실 프로브 V-SC4d 로 증명한다
+**Plans**: 8 plans (5 waves)
+- [ ] 01-01-PLAN.md — 저장소 가드레일: .gitignore(CP-1 준수)/.gitattributes/.editorconfig/pre-commit 훅/README + 저장소 밖 미디어 루트 [wave 1]
+- [ ] 01-02-PLAN.md — backend Gradle 8.14.5 스캐폴딩 + Modulith 8모듈 골격 + ModularityTests(verify) [wave 1]
+- [ ] 01-03-PLAN.md — frontend Next 16.2.12 얇은 골격 + rewrites 단일 진입 오리진 + FE Dockerfile [wave 1]
+- [ ] 01-04-PLAN.md — Flyway 스키마 단일 진실(V1 title + V2 한글 골든/CC-BY 시드) + SchemaMigrationTest [wave 2]
+- [ ] 01-05-PLAN.md — compose profiles 이원화 + mysql 기동 파라미터(G3) + nginx/prometheus 설정 [wave 2]
+- [ ] 01-06-PLAN.md — ADR-0001(EOL/CVE 정책) + ADR-0002(미디어·인코딩·D-14) + CI 코어 게이트 + Dependabot [wave 3]
+- [ ] 01-07-PLAN.md — 반사실 프로브 2건(V-SC2d/V-SC4d) + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수 [wave 4]
+- [ ] 01-08-PLAN.md — master→main 전환 + GitHub public repo 생성/push + CI 첫 런 게이트 도달성 확인 [wave 5]
 
 **비-요구사항 산출물 (가드레일 — plan-phase에서 누락 금지):** ADR-0001(Boot 3.2.12 EOL 근거 + 라인 최종 패치 고정 + non-blocking CVE 스캔), resilience4j 2.2.0 버전 핀 + 옆 주석 + `dependencyInsight` 회귀 게이트(2.3.0 금지), mysql 기동 파라미터(`--ngram_token_size=2 --collation-server=utf8mb4_0900_ai_ci`), Windows 파일명 ASCII-safe 정책 + UTF-8 명시.
 **Research**: skip — Spring Modulith/Boot 공식 문서 HIGH confidence로 충분 (SUMMARY Research Flags).
@@ -201,7 +209,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 기반 + 가드레일 | 0/TBD | Not started | - |
+| 1. 기반 + 가드레일 | 0/8 | Planned | - |
 | 2. 미디어 재생 수직 슬라이스 | 0/TBD | Not started | - |
 | 3. 카탈로그 + 계정/프로필 | 0/TBD | Not started | - |
 | 4. playback 도메인 | 0/TBD | Not started | - |
