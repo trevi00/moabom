@@ -167,12 +167,40 @@ $ git ls-files -s backend/gradlew
   반사실로 증명했고(Plan 07), CI 스텝은 같은 커맨드를 쓴다 — 그 사실이 이 결정의 근거다.
   다만 이것은 **논증이지 관측이 아니다**: 오늘 우리가 가진 것은 8종의 green(=거짓 음성 없음)이고,
   CI 층에서의 참 양성은 아직 0회 관측이다.
-- **2회차 이후 런의 `:test` 캐시 서빙 — 추정에서 실측으로 승격됐다.** 01-06 이 "가능성"으로만
-  남긴 것을 이번 런의 post 스텝이 확정했다:
-  `Saved cache entry with key gradle-build-cache-v2-... from /home/runner/.gradle/caches/build-cache-*/*`
-  Gradle build cache 가 GitHub Actions 캐시로 **실제로 저장됐다**. 다음 런은 이것을 복원하므로
-  `:test` 가 `FROM-CACHE` 로 서빙될 조건이 갖춰졌다. 따라서 **2회차부터는 이 문서의 §실행 증거
-  절차를 매번 다시 밟아야** 초록이 실행을 뜻한다. 첫 런의 무오염성은 이 저장으로 훼손되지 않는다.
+- **[HIGH · 실측 확정] 2회차 런은 이미 테스트를 0건 실행하고 green 이다.**
+  01-06 이 "가능성(미실측)"으로 남긴 것을 이 플랜이 **관측으로 닫았다**. 첫 런의 post 스텝이
+  `Saved cache entry with key gradle-build-cache-v2-daae706698ad081b77dd835d8d020023` 로 Gradle
+  build cache 를 GitHub Actions 캐시에 저장했고, 곧이어 문서 커밋 `1601c29` 로 발화한
+  **2회차 런**([31078140031](https://github.com/trevi00/moabom/actions/runs/31078140031), conclusion `success`)이
+  같은 키를 복원해 다음을 남겼다:
+
+  ```
+  Restored cache entry with key gradle-build-cache-v2-daae706698ad081b77dd835d8d020023 in 982ms
+  > Task :testClasses UP-TO-DATE
+  > Task :test FROM-CACHE
+  BUILD SUCCESSFUL in 10s
+  7 actionable tasks: 4 executed, 3 from cache
+  ```
+
+  1m34s → **10s**, `7 executed` → `4 executed, 3 from cache`. 즉 **2회차 CI 는 초록이면서
+  테스트를 한 줄도 돌리지 않았다.** 01-06 이 로컬에서 실측한 이중 vacuous PASS 가 CI 층에서
+  그대로 재현된 것이다 — 이번엔 추정이 아니라 관측이다.
+
+  함의: 첫 런의 무오염성은 훼손되지 않지만(캐시가 비어 있었다), **오늘 이후의 모든 초록은
+  기본적으로 실행 증거가 아니다.** 소스가 바뀌면 캐시 키가 달라져 재실행되므로 "코드 변경 커밋은
+  실행된다"가 성립하나, 그 판정을 사람이 매번 로그로 해야 한다는 뜻이다. 이 플랜의 위협 등록
+  T-1-39("게이트가 존재하지만 실행되지 않는 상태로 방치")의 완화가 **첫 런 1회만 덮는다**는
+  사실이 여기서 드러났다.
+
+  **해소 후보 (D-09 가 P1 CI 범위를 못박았으므로 이 플랜은 변경하지 않고 결정을 이월한다):**
+
+  | 안 | 방법 | 대가 |
+  |---|---|---|
+  | (a) 테스트만 캐시 배제 | `test { outputs.upToDateWhen { false } }` 또는 test 스텝에 `--no-build-cache` | 매 런 +~1.5분, 컴파일 캐시는 유지 |
+  | (b) 개수 단언 스텝 증설 | test-results XML 의 tests 합계를 읽어 하한(10) 단언 | FROM-CACHE 여도 XML 은 복원되므로 **이 구멍은 못 막는다** — (a) 와 병행해야 의미 |
+  | (c) 현 상태 수용 | 초록을 신뢰하지 않고 릴리즈 시점에만 로그 확인 | 규율 의존 = 썩는다 (본 문서 서두의 명제와 충돌) |
+
+  권장은 (a)+(b) 병행이며, **Phase 2 착수 시 operator 판단 항목**으로 이월한다.
 - **스텝 3(OPEN guard)의 green 은 오늘 아무것도 증명하지 않는다.** 잠긴 핀 Modulith 1.1.12 의
   `@ApplicationModule` 에는 `type` 속성 자체가 없다(01-02 javap 실측). 어떤 커밋도 이 게이트를
   발화시킬 수 없으므로 green 은 "경계가 지켜졌다"가 아니라 "검사 대상이 존재할 수 없다"는 뜻이다.
