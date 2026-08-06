@@ -1,0 +1,38 @@
+version: 2
+
+# G1 의 CVE 가시성 수단. Dependabot 은 CI 상태에 영향을 주지 않으므로 태생적으로 non-blocking 이다
+# (근거·대안 비교는 docs/adr/0001-runtime-versions.md §3).
+#
+# ignore 규칙 없이 켜면 가드레일이 가드레일을 공격한다 — Boot 4.x / resilience4j 2.3.0 bump PR 이 즉시
+# 열리고, 알림 피로로 결국 전체를 끄게 되며, 그러면 CVE 가시성이 0 이 된다 (RESEARCH CP-9).
+# 아래 ignore 는 ADR-0001 의 EOL 결정을 코드로 표현한 것이다.
+#
+# 자동 머지 설정을 두지 않는다. 그것은 핀 이탈의 가장 빠른 경로이고, resilience4j 3중 방어 중 한 층
+# (PR 자체를 안 여는 것)을 무력화한다. 머지는 사람이 판단한다.
+
+updates:
+  - package-ecosystem: gradle
+    directory: /backend
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 5
+    ignore:
+      # ADR-0001: Boot 3.2 라인 고정(EOL 인지·수용). 라인 이동은 Modulith 동반 이동을 요구하므로
+      #           단독 bump 로는 절대 안전하지 않다. 패치 업데이트만 허용한다.
+      - dependency-name: "org.springframework.boot*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "org.springframework.modulith*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # STACK §2.1: 2.3.0 은 Boot3+Java17 에서 기동 실패(issue #2265). 전 업데이트 차단.
+      - dependency-name: "io.github.resilience4j:*"
+
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 5
+    # next 를 ignore 하지 않는 것은 의도다. 현재 알려진 high 3건(postcss·sharp)의 유일한 수정 경로가
+    # next@16.3.0 이라 잠긴 핀 16.2.12 와 충돌한다 — 바로 이런 충돌을 보이게 하는 것이 G1 의 목적이다.
+    # 억제하면 가시성이 0 이 되고, 자동 머지하면 핀이 깨진다. 사람이 본다 (ADR-0001 §3).
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
