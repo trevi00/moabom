@@ -66,7 +66,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] 01-04-PLAN.md — Flyway 스키마 단일 진실(V1 title + V2 한글 골든/CC-BY 시드) + SchemaMigrationTest [wave 2]
 - [x] 01-05-PLAN.md — compose profiles 이원화 + mysql 기동 파라미터(G3) + nginx/prometheus 설정 [wave 2]
 - [x] 01-06-PLAN.md — ADR-0001(EOL/CVE 정책) + ADR-0002(미디어·인코딩·D-14) + CI 코어 게이트 + Dependabot [wave 3]
-- [ ] 01-07-PLAN.md — 반사실 프로브 2건(V-SC2d/V-SC4d) + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수 [wave 4]
+- [x] 01-07-PLAN.md — 반사실 프로브 2건(V-SC2d/V-SC4d) + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수 [wave 4]
 - [ ] 01-08-PLAN.md — master→main 전환 + GitHub public repo 생성/push + CI 첫 런 게이트 도달성 확인 [wave 5]
 
 **비-요구사항 산출물 (가드레일 — plan-phase에서 누락 금지):** ADR-0001(Boot 3.2.12 EOL 근거 + 라인 최종 패치 고정 + non-blocking CVE 스캔), resilience4j 2.2.0 버전 핀 + 옆 주석 + `dependencyInsight` 회귀 게이트(2.3.0 금지), mysql 기동 파라미터(`--ngram_token_size=2 --collation-server=utf8mb4_0900_ai_ci`), Windows 파일명 ASCII-safe 정책 + UTF-8 명시.
@@ -209,7 +209,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. 기반 + 가드레일 | 4/8 | In Progress | - |
+| 1. 기반 + 가드레일 | 7/8 | In Progress | - |
 | 2. 미디어 재생 수직 슬라이스 | 0/TBD | Not started | - |
 | 3. 카탈로그 + 계정/프로필 | 0/TBD | Not started | - |
 | 4. playback 도메인 | 0/TBD | Not started | - |

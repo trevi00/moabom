@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 01-06-PLAN.md
-last_updated: "2026-08-06T05:55:59.536Z"
-last_activity: 2026-08-06 -- 01-06 완료 (ADR-0001/0002 + CI 코어 게이트 7종 + Dependabot; 반사실 arm 6종으로 판별력 실측, 인계 대조 커맨드의 vacuous PASS 구멍 1건 발견·차단)
+stopped_at: Completed 01-07-PLAN.md
+last_updated: "2026-08-06T06:25:37.665Z"
+last_activity: 2026-08-06 -- 01-07 완료 (반사실 프로브 2건으로 게이트 '작동' 증명 + full 6서비스 실기동; A5/A6 확인·A2 반증→scrape 2분리·A3 대체구조 실동작 확인, 호스트 8080 이중 LISTEN 신규 적발)
 progress:
   total_phases: 8
   completed_phases: 0
   total_plans: 8
-  completed_plans: 6
-  percent: 75
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -26,30 +26,30 @@ See: .planning/PROJECT.md (updated 2026-08-06)
 ## Current Position
 
 Phase: 1 (기반 + 가드레일) — EXECUTING
-Plan: 7 of 8
+Plan: 8 of 8
 Status: Ready to execute
-Last activity: 2026-08-06 -- 01-06 완료 (ADR-0001/0002 + CI 코어 게이트 7종 + Dependabot; 반사실 arm 6종으로 판별력 실측, 인계 대조 커맨드의 vacuous PASS 구멍 1건 발견·차단)
+Last activity: 2026-08-06 -- 01-07 완료 (반사실 프로브 2건으로 게이트 '작동' 증명 + full 6서비스 실기동; A5/A6 확인·A2 반증→scrape 2분리·A3 대체구조 실동작 확인, 호스트 8080 이중 LISTEN 신규 적발)
 
-Progress: [████████░░] 75%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
-- Average duration: 15.5 min
-- Total execution time: 1.6 hours (93 min)
+- Total plans completed: 7
+- Average duration: 17.3 min
+- Total execution time: 2.0 hours (121 min)
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| 01 | 6 / 8 | 93 min | 15.5 min |
+| 01 | 7 / 8 | 121 min | 17.3 min |
 
 **Recent Trend:**
 
-- Last 6 plans: 9 · 21 · 23 · 18 · 11 · 11 min
-- Trend: 안정 (최근 3회 태스크당 ~4~6분. 01-06 은 태스크 3개에 11분 — 산출물이 문서·설정이라 실행 검증이 짧았고, 시간의 절반이 반사실 arm 6종과 캐시 배제 재실행에 쓰였다)
+- Last 7 plans: 9 · 21 · 23 · 18 · 11 · 11 · 28 min
+- Trend: 01-07 이 28분으로 최고치 — 산출물이 문서 3종뿐인데 시간의 대부분이 **실행**에 쓰였다(bootBuildImage 3m08s 빌더 pull, 컨테이너 6종 기동, gradle 4회 실행, 반사실 arm 3종 + 귀속 arm 1종). 문서 산출량과 소요 시간이 처음으로 역상관을 보인 플랜이며, 실기동 검증 플랜의 비용 기준선으로 쓸 것
 
 *Updated after each plan completion*
 | Phase 01 P01 | 9 min | 3 tasks | 5 files |
@@ -58,6 +58,7 @@ Progress: [████████░░] 75%
 | Phase 01 P04 | 18 min | 3 tasks | 3 files |
 | Phase 01 P05 | 11 min | 2 tasks | 5 files |
 | Phase 01 P06 | 11 min | 3 tasks | 4 files |
+| Phase 01 P07 | 28 min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -90,6 +91,10 @@ Roadmap 단계에서 확정된 순서 결정 (근거 전문: ROADMAP.md §Orderi
 - [Phase 01]: 01-06: CI OPEN guard 는 Modulith 1.1.12 에서 발화 불가한 전방 게이트임을 워크플로 주석에 정직 표기(01-02 javap 실측과 정합) — 게이트를 지우지 않고 1.2+ 상향 시 자동 활성되게 남김
 - [Phase 01]: 01-06: ARCH-01/ARCH-05 mark-complete 미실행(선례 6회째) — 워크플로 파일은 생겼으나 CI 가 0회 실행. '게이트 도달성 확인'은 ROADMAP 이 01-08 에 배정, 실기동은 01-07
 - [Phase 01]: 01-06: 플래너 자기모순 0건(5회 연속 기록 중단) — 다만 금지 리터럴이 <action> 산문에는 존재하는 near-miss. 산문을 산출물 주석으로 옮겨 적으면 acceptance 가 깨진다
+- [Phase 01]: 01-07: A2 반증 -> scrape job 2분리. 측정은 8080 점유로 오염됐으나 분리는 충돌과 독립적으로 옳다 (컨테이너 경로=호스트 포트 무의존 결정론적, dev=host-gateway 유일 경로 — 애초에 다른 토폴로지). 포트 충돌은 원인이 아니라 드러내 준 계기
+- [Phase 01]: 01-07: 호스트 8080 이중 LISTEN = (c) 현 상태 수용 + Phase 2 이월. httpd.exe(5140)와 Docker 가 동시 LISTEN 성공(Windows SO_REUSEADDR), 출처에 따라 응답자 갈림(localhost=Spring / 컨테이너 gateway=Apache). Linux 면 바인드 실패로 즉시 드러났을 조건
+- [Phase 01]: 01-07: 빌더 다이제스트는 기록이지 핀이 아님 — build.gradle 은 여전히 :latest. 재현성 미확보를 ADR 6 에 명시. 핀 승격 조건 = 날짜에 따라 빌드가 갈리는 사고 1회
+- [Phase 01]: 01-07: ARCH-01/ARCH-05 mark-complete 미실행 (선례 7회째) — CI 0회 실행 + 문서대로의 한 커맨드 기동이 이 머신에서 미충족(grafana 3001 바인드 실패, 오버레이 시에만 exit 0)
 
 ### Pending Todos
 
@@ -106,19 +111,28 @@ None yet.
 - **[D2 잔여 리스크]** 검색이 v1 후반까지 없음 — Phase 5~6 구간에 "검색 없는 데모"가 존재한다.
 - **[버전 핀 체크포인트]** resilience4j 2.2.0 고정(2.3.0은 Boot 3 + Java 17에서 기동 실패), Boot 3.2.12 라인 최종 패치 — Phase 1에서 핀, Phase 6·8 착수 시 실측 재확인.
 - **[문서 불일치, 해소됨]** REQUIREMENTS.md 헤더가 v1 요구사항 "53 total"이라 적었으나 실측 58개. 로드맵은 58개 전부 매핑, REQUIREMENTS.md Coverage 블록 정정 완료.
-- **[Plan 07, HIGH]** 로컬 8080 을 무관한 서비스(EnterpriseDB, PID 5140)가 점유 중 — 백엔드 로컬 기동 전 해제하거나 포트를 옮겨야 한다 (01-03 프로브가 우연히 발견)
-- **[Plan 07, HIGH · Plan 05 소관분 해소]** BACKEND_ORIGIN/MEDIA_ORIGIN 은 런타임 변수가 아니다 — rewrites 목적지는 next build 시점에 구워진다(01-03 A3 반증). ✅ 01-05 에서 compose `web` 을 `build.args` 로 배선하고 README·`.env.example` 주석도 정정. 잔여 = Plan 07 이 full 프로필 실기동으로 `curl :3000/api/health` 200 을 확인하는 것
+- **[대체됨 — 01-07]** ~~로컬 8080 을 무관한 서비스(EnterpriseDB, PID 5140)가 점유 중~~ → 01-07 이 정체를 실측 확정(`httpd.exe`, PID 5140)하고 **증상이 예상과 달랐음**을 발견: 바인드가 실패하지 않고 Docker 와 **동시 LISTEN 에 성공**했다. 아래 `[Phase 2 착수 전, HIGH]` 항목으로 대체.
+- **[해소됨 — 01-07]** BACKEND_ORIGIN/MEDIA_ORIGIN 은 런타임 변수가 아니다 — rewrites 목적지는 next build 시점에 구워진다(01-03 A3 반증). ✅ 01-05 에서 compose `web` 을 `build.args` 로 배선. ✅ **01-07 이 full 프로필 실기동으로 `curl :3000/api/health` → `{"status":"UP","app":"moabom","ts":...}` 200 을 확인** — 대체 구조(D-06)가 실동작함이 증명됐다. 잔여 없음.
 - **[Plan 08+, MEDIUM · Plan 06 소관분 해소]** npm audit high 3건(postcss XSS/경로순회, sharp libvips CVE) — 수정 경로가 next@16.3.0 뿐이라 잠긴 핀 16.2.12 와 충돌. ✅ 01-06 에서 **의도적으로 ignore 하지 않기로 결정** — 억제하면 G1 가시성이 0 이 되고 자동머지하면 핀이 깨진다. 근거를 `dependabot.yml` 주석 + ADR-0001 §3 양쪽에 기록. 잔여 = repo push 후 Dependabot 이 실제로 PR 을 열면 **사람이 핀 vs CVE 를 판단**하는 것
 - **[해소됨 — 01-06]** compose mysql `command:` 3종 ↔ SchemaMigrationTest `withCommand` 문자 일치(CP-10)의 **자동 게이트 부재**. ✅ 01-06 이 CI 스텝 `mysql 기동 파라미터 대조 (G3 / CP-10)` 로 승격. 인계받은 diff-only 판정은 **양쪽 동시 삭제 시 조용히 통과**함을 반사실 ARM2 로 실측해, 값 비교 앞에 **개수 선-단언(3종)** 을 배치했다. 잔여 = 이 스텝이 실제로 도는지는 CI 첫 런(01-08) 관측 대상
 - **[Plan 08, MEDIUM]** ubuntu CI 첫 런이 Flyway 한글 인코딩의 실검증 지점이다 — 로컬 Windows 는 green(01-06 에서 캐시 배제 실행으로 10/10 재확인)이지만 CI 미실행. `koreanTitlesRoundTrip` 이 붉어지면 `spring.flyway.encoding: UTF-8` 추가로 대응(시드 ASCII 화 회피 금지). 또한 `./gradlew build` 가 **Docker 를 요구**한다(Testcontainers) — ci.yml 은 `ubuntu-latest` 로 고정됨
-- [Plan 07, HIGH] Git Bash 로컬 검증엔 MSYS_NO_PATHCONV=1 필수 — '/' 로 시작하는 grep 패턴과 docker run -v 의 컨테이너측 경로가 C:/Program Files/Git/... 로 변환된다. 없으면 조용히 통과하는 vacuous PASS 경로 존재(nginx -t 가 우리 conf 를 안 보고도 rc=0). ubuntu CI 는 무영향
-- [Plan 07, MEDIUM] MEDIA_ROOT(D:/moabom-media) 바인드는 파싱만 확인됨 — Docker Desktop 의 D: 드라이브 파일 공유 설정에 따라 실기동에서 마운트 실패 가능. 캐시 헤더(m3u8/세그먼트) 실검증은 실 파일이 없어 P2 소관
+- **[갱신됨 — 01-07, MEDIUM]** Git Bash 검증엔 `MSYS_NO_PATHCONV=1` 필수 — '/' 로 시작하는 grep 패턴과 docker `-v` 컨테이너측 경로가 변환된다. ⚠️ **01-07 이 역방향 함정도 실측**: `MSYS_NO_PATHCONV=1` 을 켠 상태에서 `docker compose -f /c/Users/...` 를 주면 이번엔 변환이 **안 돼서** docker 가 `D:\c\Users\...` 로 해석해 실패한다. 규칙 = **컨테이너측 경로엔 켜고, 호스트 경로 인자는 Windows 형식(`C:/...`)으로 준다**. ubuntu CI 는 무영향
+- **[부분 해소 — 01-07, MEDIUM]** MEDIA_ROOT(D:/moabom-media) 바인드 — ✅ **실기동에서 nginx 가 정상 기동했다**(D: 드라이브 파일 공유 문제 없음, `/healthz` → `ok`). 잔여 = 캐시 헤더(m3u8/세그먼트) 실검증은 실 미디어 파일이 없어 여전히 P2 소관
 - [Plan 08, MEDIUM] CI 2회차 이후 런에서 `:test` 가 build cache 로 서빙될 가능성 — 로컬에서 `./gradlew build` 가 UP-TO-DATE, `cleanTest test` 가 FROM-CACHE 로 두 번 연속 BUILD SUCCESSFUL 을 내면서 테스트를 한 줄도 실행하지 않았다(01-06 실측). gradle/actions/setup-gradle 이 Gradle user home 을 복원하므로 CI 도 동형일 수 있다(미실측). 첫 런은 캐시가 비어 반드시 실행되므로 전제는 유지되나, **초록 체크마크가 아니라 로그에서 `:test` 실행과 tests= 수를 확인**할 것
+- [Phase 2 착수 전, HIGH] 호스트 8080 정리 — operator 결정 필요(httpd.exe PID 5140 정지 or 앱 포트 이동). 01-07 결정 = (c) 현 상태 수용 이월. Docker 와 httpd 가 동시 LISTEN 에 성공해 출처별로 응답자가 갈린다(localhost=Spring / 컨테이너 gateway=Apache) — dev 모드(bootRun)와 host-gateway 스크레이프가 이 문제를 그대로 받는다
+- [operator, MEDIUM] 01-HUMAN-UAT.md U-1~U-5 미확인 (status: partial). T3 승인은 HTTP 대리 검증 근거였고 육안 렌더 3종 + 문서 설득력 판단 2종은 사람 몫으로 남았다
+- [Phase 3, MEDIUM] app 의 0.0.0.0:8080 발행이 근거를 잃음 — A2 대안으로 메트릭이 compose 네트워크로 들어오므로 LAN 노출을 감수할 이유가 사라졌다(ADR-0001 7/9). 루프백 조임은 dev 워크플로·README 동반 변경이라 보류
+- [Phase 6, LOW] Grafana 대시보드는 moabom-app-container 와 moabom-app-host 두 job 을 합집합으로 질의해야 한다 — 어느 모드든 하나는 항상 DOWN 인 것이 설계다
 
 ## Session Continuity
 
-Last session: 2026-08-06T05:55:23.354Z
-Stopped at: Completed 01-06-PLAN.md
+Last session: 2026-08-06T06:25:02.794Z
+Stopped at: Completed 01-07-PLAN.md
 Resume file: None
 
-Next: `/kha-execute-phase 1` (01-07-PLAN.md — 반사실 프로브 V-SC2d/V-SC4d + full 프로필 실기동 + 가정 A2/A3/A5/A6 해소 + 사람 검수, wave 4)
+Next: `/kha-execute-phase 1` (01-08-PLAN.md — master→main 전환 + GitHub public repo 생성/push + **CI 첫 런 게이트 도달성 확인**, wave 5 / Phase 1 마지막)
+
+01-08 이 Phase 1 의 마지막 플랜이며, 여기서 처음으로 CI 가 실제로 돈다. 그때 확인할 것:
+- ARCH-01 / ARCH-05 mark-complete (7회 미룬 것 — 01-08 이 마지막 기여 플랜)
+- 게이트 7종의 **실 발화** (초록 체크마크가 아니라 로그의 `:test` 실행 + `tests=` 수)
+- 미디어 히스토리 스캔의 첫 발화 (로컬 훅의 실 boundary)
