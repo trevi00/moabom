@@ -43,6 +43,23 @@ cd .. && docker compose --profile full up
 빌드한 뒤의* compose 한 커맨드다. `pull_policy: never`가 이미지 부재를 즉시·명확히 실패시킨다
 (레지스트리 pull 시도 후의 인증 오류로 헷갈리지 않는다).
 
+### 호스트 포트 충돌 (실측 2026-08-06)
+
+full 프로필은 호스트 포트 6개를 씁니다: **3000 · 3306 · 8080 · 8081 · 9090 · 3001**.
+이미 쓰는 프로세스가 있으면 이렇게 나타납니다:
+
+```
+failed to bind host port for 127.0.0.1:3001:...:3000/tcp: address already in use
+```
+
+점유자 확인: `netstat -ano | grep ':3001 '` → 마지막 열이 PID → `tasklist /FI "PID eq <PID>"`.
+
+⚠️ **Windows 함정**: 8080은 *조용히* 충돌할 수 있습니다. Windows 소켓 의미론상 두 프로세스가
+같은 포트에 동시에 LISTEN 하는 데 성공하고, **출처에 따라 응답자가 갈립니다** — 실측에서
+`localhost:8080`은 우리 앱이, 컨테이너에서 본 `host.docker.internal:8080`은 무관한 Apache가
+응답했습니다. "분명히 떴는데 저쪽에선 404"가 나오면 `netstat -ano | grep ':8080 '`의
+**LISTEN 줄이 2개인지** 먼저 보세요. Linux였다면 바인드 실패로 즉시 드러났을 조건입니다.
+
 ## 평시 개발
 
 ```bash

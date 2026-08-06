@@ -118,18 +118,25 @@ Boot 3.2.12의 `bootBuildImage` 기본 빌더는 `paketobuildpacks/builder-jammy
 
 ```
 - builder image: paketobuildpacks/builder-jammy-base:latest
-- first successful build digest: (Plan 07 실기동 태스크가 기록)
+- first successful build digest: sha256:814d7522dcf92cc9dee31a21a3950ef6ddca93bb49f161b32eb9602d4e9a0bd9   (빌드일 2026-08-06)
+- run image:     paketobuildpacks/run-jammy-base@sha256:daa7fb1845d9b47e3f6ab5f38550340128f435fb2ae21d21aea663f8931b2aa5
+- 산출 이미지:   moabom-app:local = sha256:c1bb9b569ab920441d1251315986d5837eb3a9df6ae26712b00f45256666106a
+- 빌드 시간:     3분 8초 (빌더·run 이미지 pull 포함, 최초 1회)
 ```
 
-⚠️ 정직 표기: **이 시점(Plan 06)에는 아직 성공 빌드가 없다.** 위 줄은 빈 자리이며, 채워지기 전까지
-"빌더가 정상 동작한다"는 주장은 근거가 없다(RESEARCH 가정 A5, 미해소).
+✅ Plan 07 실측(2026-08-06)으로 채워졌다 — **가정 A5 해소**. 위 줄이 비어 있던 동안 근거가 없던
+"빌더가 정상 동작한다"는 주장은 이제 실 빌드 1회로 뒷받침된다.
+
+⚠️ 남는 정직 표기: **핀을 건 것이 아니라 기록한 것이다.** `build.gradle`은 여전히 `:latest`를 쓰므로
+다음 빌드는 다른 다이제스트를 쓸 수 있다. 위 값은 "재현이 필요해지면 여기로 되돌린다"는 이월 기록이며,
+재현성 자체는 아직 확보되지 않았다. 핀으로 승격하는 조건 = 빌드가 날짜에 따라 갈리는 사고가 1회라도 나면.
 
 ### 7. 위협모델 — accept 항목 (차단하지 않고 받아들이는 것)
 
 | 항목 | 실체 | 왜 accept |
 |---|---|---|
 | MySQL root 기본 비밀번호 `moabom-local` | `compose.yaml`의 `${MYSQL_ROOT_PASSWORD:-moabom-local}` 기본값 | **로컬 전용 값**이며 실 시크릿이 아니다. 3306은 `127.0.0.1` 바인드라 LAN에 열리지 않는다. 실 시크릿은 `.env`(gitignore)로만 들어오고 저장소에 커밋되는 것은 `.env.example`뿐이다 |
-| `app:8080`만 `0.0.0.0` 바인드 | 다른 발행 포트는 전부 루프백인데 이것만 예외 | Prometheus가 `host.docker.internal:8080`(host-gateway)로 스크레이프하려면 이 경로가 필요하다. **잔여 위험은 비-제로다** — 같은 LAN에서 8080에 접근 가능하다. 완화 = 앱에 인증 표면이 생기는 Phase 3에서 재검토, 데모 시 신뢰 네트워크에서만 기동 |
+| `app:8080`만 `0.0.0.0` 바인드 | 다른 발행 포트는 전부 루프백인데 이것만 예외 | 원 근거: Prometheus가 `host.docker.internal:8080`(host-gateway)로 스크레이프하려면 이 경로가 필요하다. **잔여 위험은 비-제로다** — 같은 LAN에서 8080에 접근 가능하다. ⚠️ **이 근거는 §9(A2 대안 적용)로 약화됐다** — full 의 메트릭은 이제 compose 네트워크(`app:8080`)로 들어오므로 발행이 메트릭의 전제가 아니다. 그럼에도 dev 워크플로가 호스트 8080 을 직접 쓰므로 바인드 변경은 보류하고 Phase 3 재검토로 이월 |
 | GitHub Actions 메이저 태그 핀(`@v7` 등, SHA 핀 아님) | 태그가 이동하면 다른 코드가 실행된다 | 이 위협모델(공개 포트폴리오·시크릿 0·배포 없음·`GITHUB_TOKEN` read-only)에 SHA 핀은 과하다. Dependabot의 `github-actions` 감시가 월 1회 가시성을 준다. **시크릿이나 배포 잡이 생기는 phase에서 SHA 핀으로 승격한다** |
 | Actuator 노출 | `health,info,prometheus` 화이트리스트 | `"*"` 노출은 `/env`·`/heapdump`·`/configprops` 유출 표면을 만든다. 화이트리스트는 `application.yaml`에 명시돼 있다 |
 
@@ -144,6 +151,41 @@ Spring **Modulith** 모듈리스 단일 배포로 시작한다. 물리 마이크
 
 이 순서 자체가 Netflix가 실제로 밟은 경로의 재현이며, "처음부터 MSA"가 아니라는 것이 이 포트폴리오의 논점이다.
 
+### 9. 실측으로 닫힌 가정 (Phase 1)
+
+RESEARCH `Assumptions Log`가 `[ASSUMED]`로 남긴 항목 중 Phase 1 소관 4건을, Plan 07의 full 프로필
+**실기동**으로 판정했다 (2026-08-06, Windows 11 / Docker 28.1.1 / Compose v2.35.1).
+
+| # | 가정 | 판정 | 근거 (실측) |
+|---|---|---|---|
+| **A2** | `host.docker.internal:host-gateway` **단일** 스크레이프 타깃이 dev·full 양쪽에서 동작한다 | **반증 → 대안 적용** | full 에서 DOWN, `lastError: server returned HTTP status 404 Not Found`. 404 는 연결 거부가 아니라 **누군가 응답했다**는 뜻이라 응답자를 확인했다: 컨테이너→`host.docker.internal:8080/` 은 `Server: Apache`, 호스트→`localhost:8080/` 은 Spring. 대안(scrape job 2개 분리) 적용 후 `moabom-app-container` **UP** + `jvm_memory_used_bytes` 8 시리즈 실수집 확인 |
+| **A3** | Next `rewrites()`가 서버 기동 시 평가되어 `next start` **런타임 env** 를 반영한다 | **반증 (01-03에서 이미) — 결과는 확인** | 메커니즘은 01-03 반사실 2-arm 프로브가 이미 반증했다(목적지는 `next build` 시점 `routes-manifest.json` 으로 구워진다). 그 반증에 따라 채택한 구조(Dockerfile `ARG` + compose `build.args`)가 **실동작함**을 이번에 확인: `curl :3000/api/health` → `{"ts":"...","status":"UP","app":"moabom"}`. 즉 A3 의 *주장*은 거짓이고, *그 자리를 대체한 D-06 구조*는 참이다 |
+| **A5** | Paketo `builder-jammy-base:latest` 가 현 시점 정상 동작한다 | **확인** | `bootBuildImage` exit 0, 3분 8초. 다이제스트 §6 에 기록. 핀은 걸지 않았다(위 정직 표기) |
+| **A6** | `mysqladmin ping --silent` 헬스체크가 인증 없이 성공한다 | **확인** | `docker compose ps` → `mysql Up (healthy)`. `up --wait` 가 `Container moabom-mysql-1 Healthy` 로 통과했고 `app` 의 `depends_on: service_healthy` 게이트가 실제로 열렸다 — 헬스체크가 장식이 아님이 기동 순서로 증명됨 |
+
+**A2 판정의 정직한 한정 (중요)**: 이 머신의 8080 은 무관한 `httpd.exe`(PID 5140)가 점유 중이고,
+Windows 소켓 의미론상 Docker 가 **같은 포트에 동시 LISTEN 하는 데 성공**했다. 따라서 관측된 DOWN 에는
+환경 요인이 섞여 있다 — 깨끗한 머신에서는 단일 타깃도 동작했을 수 있다. 그럼에도 대안을 적용한 이유는
+**충돌과 무관하게 분리가 옳기 때문**이다:
+
+- full 에서 `app:8080`(compose 네트워크)은 호스트 포트 발행에 **전혀 의존하지 않는다** → 결정론적이다.
+- dev 에서 앱은 호스트 JVM 이라 컨테이너 이름으로 닿을 수 없다 → host-gateway 가 유일한 경로다.
+- 두 모드는 애초에 **다른 토폴로지**이고, 타깃 하나로 둘 다 덮으려던 것이 무리였다.
+
+즉 포트 충돌은 원인이 아니라 **드러내 준 계기**다. 다만 "단일 타깃 전략이 깨끗한 환경에서 실패한다"는
+주장은 본 프로젝트가 **증명하지 않았다**.
+
+**A2 대안이 §7 의 accept 하나를 약화시킨다 (열린 항목)**: `app` 을 `0.0.0.0:8080` 으로 발행하는 유일한
+근거가 "Prometheus 가 host-gateway 로 스크레이프해야 한다"였는데, 이제 full 의 메트릭은
+compose 네트워크로 들어온다. 즉 **LAN 노출을 감수할 이유가 사라졌다.** 그럼에도 이 ADR 은 바인드를
+바꾸지 않는다 — 발행 포트 변경은 dev 워크플로(호스트 8080 직접 접근)와 README 를 함께 건드리는
+결정이라 사람이 판단할 몫이다. Phase 3(인증 표면 등장) 재검토 항목에 이 근거 약화를 명시해 이월한다.
+
+**부수 발견 (Phase 2+ 이월, 이 ADR 의 결정 사항 아님)**: 호스트 8080 에 두 프로세스가 동시에 LISTEN 하면
+**출처에 따라 응답자가 갈린다**(localhost→Spring / 컨테이너 gateway→Apache). Linux 라면 바인드 실패로
+즉시 드러났을 조건이 Windows 에서는 조용히 통과한다. 로컬에서 "분명히 떴는데 왜 저쪽에선 404 인가"가
+나오면 `netstat -ano | grep ':8080 '` 로 **LISTEN 이 2줄인지** 먼저 볼 것.
+
 ---
 
 ## Consequences
@@ -156,8 +198,16 @@ Spring **Modulith** 모듈리스 단일 배포로 시작한다. 물리 마이크
 **나빠지는 것 / 비용**
 - Boot 3.2 라인의 신규 CVE는 **영원히 미패치**로 남는다. 이 문서는 그것을 고치지 않고 **기록**한다.
 - Dependabot이 무시하지 않는 의존성(예: `next`)에서 핀 vs CVE 충돌 PR이 계속 열린다 — 사람의 판단 비용.
-- 빌더 `:latest`는 재현성이 없다. Plan 07이 다이제스트를 채우기 전까지 이 리스크는 열려 있다.
+- 빌더 `:latest`는 재현성이 없다. Plan 07이 다이제스트를 **기록**했으나 **핀하지는 않았다**(§6).
 
-**잔여 리스크 (비-제로, 정직 표기)**
-- 알려진 결함 N=2: (a) 빌더 다이제스트 미기록(가정 A5 미해소), (b) `npm audit` high 3건 미해결(핀 충돌).
-- 자동 회귀 커버: 핀 이탈은 CI가 잡는다 / EOL 자체와 CVE 등장은 **어떤 게이트도 잡지 않는다** — 사람이 본다.
+**잔여 리스크 (비-제로, 정직 표기 — 2026-08-06 Plan 07 실측 후 갱신)**
+- 알려진 결함 N=3:
+  (a) `npm audit` high 3건 미해결 — 유일 수정 경로 `next@16.3.0`이 잠긴 핀 16.2.12와 충돌(§3).
+  (b) 빌더가 `:latest`라 재현성 없음 — 다이제스트는 기록됐으나 핀은 아니다(§6). *A5 자체는 해소.*
+  (c) `app`의 `0.0.0.0:8080` 발행이 근거를 잃은 채 남아 있다(§7·§9) — Phase 3 재검토로 이월.
+- **환경 결함 1건(저장소 밖, 이 ADR이 고칠 수 없음)**: 개발 머신의 호스트 8080을 무관한
+  `httpd.exe`(PID 5140)가 점유 중이며, 3001은 다른 프로젝트의 grafana 컨테이너가 점유 중이다.
+  전자는 dev 모드(`bootRun`)와 host-gateway 스크레이프를 조용히 오염시키고, 후자는
+  `docker compose --profile full up`을 **바인드 실패로 중단시킨다**(실측). 해소는 operator 소관이다.
+- 자동 회귀 커버: 핀 이탈은 CI가 잡는다(G2) / EOL 자체·CVE 등장·호스트 포트 점유는
+  **어떤 게이트도 잡지 않는다** — 사람이 본다.
