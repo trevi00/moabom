@@ -35,13 +35,13 @@ closes_when: "아래 잔여 5항목에 operator 가 직접 확인 표시를 남�
 
 ## 잔여 — operator 가 직접 확인할 것 (status: partial 의 실체)
 
-- [ ] **U-1. `:3000` 육안 확인.** 브라우저로 http://localhost:3000 을 열어 "모아봄" 제목과
+- [x] **U-1. `:3000` 육안 확인.** ✅ 2026-08-06 operator 확인 — 렌더 정상, 새로고침 시 ts 갱신. (부기: "헬스체크 뷰뿐"이라는 관찰은 정확하며 D-05 의도 — 실 UI는 P2 재생 페이지·P5 행 홈(목업 선행).) 브라우저로 http://localhost:3000 을 열어 "모아봄" 제목과
       회색 박스의 JSON 이 **사람 눈에 정상으로 보이는지**. (HTML 바이트가 옳은 것과 렌더가 옳은 것은 다르다 —
       CSS 붕괴·폰트 누락·박스 밖 오버플로는 curl 로 안 보인다.)
-- [ ] **U-2. `:9090/targets` 육안 확인.** `moabom-app-container` 가 초록인지. 빨간 `moabom-app-host` 는
+- [x] **U-2. `:9090/targets` 육안 확인.** ✅ 2026-08-06 operator 확인 — container UP(초록)·host DOWN(설계 정상 인지 완료). `moabom-app-container` 가 초록인지. 빨간 `moabom-app-host` 는
       **설계상 정상**임을 알고 보는지 (모르면 다음 사람이 이걸 고장으로 오인한다).
-- [ ] **U-3. `:3002` 로그인 화면 육안 확인.** ⚠️ **`:3001` 이 아니다** — 아래 §환경 참조.
-- [ ] **U-4. `01-COUNTERFACTUAL-LOG.md` 잔여 표기 동의.** 특히 "`--no-verify` 로 우회 가능 /
+- [x] **U-3. `:3002` 로그인 화면 육안 확인.** ✅ 2026-08-06 operator 확인 — 로그인 성공, admin 비밀번호를 기본값에서 변경(값은 로컬 `.env`의 `GRAFANA_PASSWORD`로만 영속화 — gitignored, repo 미기록. grafana는 무볼륨이라 env가 유일한 영속 경로).
+- [x] **U-4. `01-COUNTERFACTUAL-LOG.md` 잔여 표기 동의.** ✅ 2026-08-06 operator 수용 — 3한계(--no-verify 우회·실 boundary=CI·미설정 클론 무훅)를 알려진 잔여로 인정, 후속 요청 없음. 특히 "`--no-verify` 로 우회 가능 /
       실 boundary 는 CI 히스토리 스캔 / `core.hooksPath` 미설정 시 훅 자체가 없음" 세 줄에 동의하는지.
       (오케스트레이터는 이것이 하네스 위협모델 정직 규율과 정합한다고 **잠정** 수용했다.)
 - [ ] **U-5. `docs/adr/0001-runtime-versions.md` §9 설득력 판단.** EOL 스택 수용 근거가
