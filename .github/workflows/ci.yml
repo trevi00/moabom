@@ -73,7 +73,7 @@ jobs:
             echo "::error::compose 와 SchemaMigrationTest 의 mysql 기동 파라미터가 어긋났습니다"; exit 1
           fi
 
-      - uses: actions/setup-java@v5
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
